@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 // our db models
 var Person = require("../models/person.js");
 var Course = require("../models/course.js");
+var Task = require("../models/task.js");
 
 // S3 File dependencies
 var AWS = require('aws-sdk');
@@ -20,6 +21,51 @@ var s3 = new AWS.S3();
 var fs = require('fs');
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
+
+// GET /
+
+router.get('/', function(req, res){
+  console.log('forward slash / requested');
+
+  res.redirect('/dashboard');
+});
+
+// GET /dashboard
+router.get('/dashboard', function(req, res) {
+
+  console.log('dashboard requested!');
+
+  // var jsonData = {
+  //   'name': 'itp-directory',
+  //   'api-status':'OK'
+  // }
+
+  // respond with json data
+  //res.json(jsonData)
+
+  // respond by redirecting
+  //res.redirect('/directory')
+
+  // respond with html
+  res.render('dashboard.html')
+
+});
+
+// TYPE TASK creates router.post request
+
+router.post('/dashboard', function(req,res){
+
+  console.log(req.body);
+  // var taskObject = {
+  //   title: title,
+  //   taskBody: taskBody,
+  //   taskType: taskTag,
+  //   dateAdded: 
+  // }
+
+
+});
+
 
 /**
  * GET '/'
