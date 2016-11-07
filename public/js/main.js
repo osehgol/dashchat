@@ -183,6 +183,55 @@ dropZone.addEventListener('drop', handleFileSelect, false);
 // module.exports = router;
 
 
+// For making POST request to /dashboard via JQUERY
+
+jQuery("#addForm").submit(function(e){
+
+	// first, let's pull out all the values
+	// the name form field value
+	var task = jQuery("#theInput").val();
+	
+
+		// make sure we have a location
+	if(!location || location=="") return alert('We need a location!');
+
+	// POST the data from above to our API create route
+  jQuery.ajax({
+  	url : '/dashboard',
+  	dataType : 'json',
+  	type : 'POST',
+  	// we send the data in a data object (with key/value pairs)
+  	data : {
+  		task : task
+  	},
+  	success : function(response){
+  		if(response.status=="OK"){
+	  		// success
+	  		console.log(response);
+	  		// re-render the map
+	  		renderPlaces();
+	  		// now, clear the input fields
+	  		jQuery("#addForm input").val('');
+  		}
+  		else {
+  			alert("something went wrong");
+  		}
+  	},
+  	error : function(err){
+  		// do error checking
+  		alert("something went wrong");
+  		console.error(err);
+  	}
+  });
+
+	// prevents the form from submitting normally
+  e.preventDefault();
+  return false;
+
+});
+
+
+
 /*
 error: text overflows card
 error: repeat file image prints 
