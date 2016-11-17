@@ -77,274 +77,261 @@ router.post('/dashboard', function(req,res){
 });
 
 
-/**
- * GET '/'
- * Default home route. Just relays a success message back.
- * @param  {Object} req
- * @return {Object} json
- */
-router.get('/', function(req, res) {
+// /**
+//  * GET '/'
+//  * Default home route. Just relays a success message back.
+//  * @param  {Object} req
+//  * @return {Object} json
+//  */
+// router.get('/', function(req, res) {
 
-  console.log('home page requested!');
+//   console.log('home page requested!');
 
-  var jsonData = {
-  	'name': 'itp-directory',
-  	'api-status':'OK'
-  }
+//   var jsonData = {
+//   	'name': 'itp-directory',
+//   	'api-status':'OK'
+//   }
 
-  // respond with json data
-  //res.json(jsonData)
+//   // respond with json data
+//   //res.json(jsonData)
 
-  // respond by redirecting
-  //res.redirect('/directory')
+//   // respond by redirecting
+//   //res.redirect('/directory')
 
-  // respond with html
-  res.render('directory.html')
+//   // respond with html
+//   res.render('directory.html')
 
-});
+// });
 
-router.get('/add-person', function(req,res){
+// router.get('/add-person', function(req,res){
 
-  res.render('add.html')
+//   res.render('add.html')
 
-})
+// })
 
-router.get('/add-person-with-image', function(req,res){
+// router.get('/add-person-with-image', function(req,res){
 
-  res.render('add-with-image.html')
+//   res.render('add-with-image.html')
 
-})
+// })
 
-router.get('/directory', function(req,res){
+// router.get('/directory', function(req,res){
 
-  res.render('directory.html')
+//   res.render('directory.html')
 
-})
+// })
 
 
-router.get('/edit/:id', function(req,res){
+// router.get('/edit/:id', function(req,res){
 
-  var requestedId = req.params.id;
+//   var requestedId = req.params.id;
 
-  Person.findById(requestedId,function(err,data){
-    if(err){
-      var error = {
-        status: "ERROR",
-        message: err
-      }
-      return res.json(err)
-    }
+//   Person.findById(requestedId,function(err,data){
+//     if(err){
+//       var error = {
+//         status: "ERROR",
+//         message: err
+//       }
+//       return res.json(err)
+//     }
 
-    console.log(data); 
+//     console.log(data); 
 
-    var viewData = {
-      pageTitle: "Edit " + data.name,
-      person: data
-    }
+//     var viewData = {
+//       pageTitle: "Edit " + data.name,
+//       person: data
+//     }
 
-    res.render('edit.html',viewData);
+//     res.render('edit.html',viewData);
 
-  })
+//   })
 
-})
+// })
 
+// router.get('/edit/:id', function(req,res){
 
+//   var requestedId = req.params.id;
 
+//   Person.findById(requestedId,function(err,data){
+//     if(err){
+//       var error = {
+//         status: "ERROR",
+//         message: err
+//       }
+//       return res.json(err)
+//     }
 
+//     var viewData = {
+//       status: "OK",
+//       person: data
+//     }
 
+//     return res.render('edit.html',viewData);
+//   })
 
+// })
 
 
+// router.post('/api/create', function(req,res){
 
+//   console.log(req.body);
 
-
-
-
-
-router.get('/edit/:id', function(req,res){
-
-  var requestedId = req.params.id;
-
-  Person.findById(requestedId,function(err,data){
-    if(err){
-      var error = {
-        status: "ERROR",
-        message: err
-      }
-      return res.json(err)
-    }
-
-    var viewData = {
-      status: "OK",
-      person: data
-    }
-
-    return res.render('edit.html',viewData);
-  })
-
-})
-
-
-router.post('/api/create', function(req,res){
-
-  console.log(req.body);
-
-  var personObj = {
-    name: req.body.name,
-    itpYear: req.body.itpYear,
-    interests: req.body.interests.split(','),
-    link: req.body.link,
-    imageUrl: req.body.imageUrl,
-    slug : req.body.name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'-')
-  }
-
-  if (req.body.hasGlasses == 'yes') personObj['hasGlasses'] = true;
-  else personObj['hasGlasses'] = false;
-
-  var person = new Person(personObj);
-
-  person.save(function(err,data){
-    if(err){
-      var error = {
-        status: "ERROR",
-        message: err
-      }
-      return res.json(err)
-    }
-
-    var jsonData = {
-      status: "OK",
-      person: data
-    }
-
-    return res.json(jsonData);
-
-  })
-
-})
-
-router.post('/api/edit/:id', function(req,res){
-
-  console.log(req.body);
-  var requestedId = req.params.id;
-
-  var personObj = {
-    name: req.body.name,
-    itpYear: req.body.itpYear,
-    interests: req.body.interests.split(','),
-    link: req.body.link,
-    imageUrl: req.body.imageUrl,
-    slug : req.body.name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'_')
-  }
-
-  console.log(personObj);
-
-  Person.findByIdAndUpdate(requestedId,personObj,function(err,data){
-    if(err){
-      var error = {
-        status: "ERROR",
-        message: err
-      }
-      return res.json(error)
-    }
-
-    var jsonData = {
-      status: "OK",
-      person: data
-    }
-
-    //return res.json(jsonData);
-
-    return res.redirect('/directory');
-
-  })
-
-})
-
-router.post('/api/create/image', multipartMiddleware, function(req,res){
-
-  console.log('the incoming data >> ' + JSON.stringify(req.body));
-  console.log('the incoming image file >> ' + JSON.stringify(req.files.image));
-
-  var personObj = {
-    name: req.body.name,
-    itpYear: req.body.itpYear,
-    interests: req.body.interests.split(','),
-    link: req.body.link,
-    slug : req.body.name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'-')
-  }
-
-  if (req.body.hasGlasses == 'yes') personObj['hasGlasses'] = true;
-  else personObj['hasGlasses'] = false;
-
-
-  // NOW, we need to deal with the image
-  // the contents of the image will come in req.files (not req.body)
-  var filename = req.files.image.name; // actual filename of file
-  var path = req.files.image.path; // will be put into a temp directory
-  var mimeType = req.files.image.type; // image/jpeg or actual mime type
+//   var personObj = {
+//     name: req.body.name,
+//     itpYear: req.body.itpYear,
+//     interests: req.body.interests.split(','),
+//     link: req.body.link,
+//     imageUrl: req.body.imageUrl,
+//     slug : req.body.name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'-')
+//   }
+
+//   if (req.body.hasGlasses == 'yes') personObj['hasGlasses'] = true;
+//   else personObj['hasGlasses'] = false;
+
+//   var person = new Person(personObj);
+
+//   person.save(function(err,data){
+//     if(err){
+//       var error = {
+//         status: "ERROR",
+//         message: err
+//       }
+//       return res.json(err)
+//     }
+
+//     var jsonData = {
+//       status: "OK",
+//       person: data
+//     }
+
+//     return res.json(jsonData);
+
+//   })
+
+// })
+
+// router.post('/api/edit/:id', function(req,res){
+
+//   console.log(req.body);
+//   var requestedId = req.params.id;
+
+//   var personObj = {
+//     name: req.body.name,
+//     itpYear: req.body.itpYear,
+//     interests: req.body.interests.split(','),
+//     link: req.body.link,
+//     imageUrl: req.body.imageUrl,
+//     slug : req.body.name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'_')
+//   }
+
+//   console.log(personObj);
+
+//   Person.findByIdAndUpdate(requestedId,personObj,function(err,data){
+//     if(err){
+//       var error = {
+//         status: "ERROR",
+//         message: err
+//       }
+//       return res.json(error)
+//     }
+
+//     var jsonData = {
+//       status: "OK",
+//       person: data
+//     }
+
+//     //return res.json(jsonData);
+
+//     return res.redirect('/directory');
+
+//   })
+
+// })
+
+// router.post('/api/create/image', multipartMiddleware, function(req,res){
+
+//   console.log('the incoming data >> ' + JSON.stringify(req.body));
+//   console.log('the incoming image file >> ' + JSON.stringify(req.files.image));
+
+//   var personObj = {
+//     name: req.body.name,
+//     itpYear: req.body.itpYear,
+//     interests: req.body.interests.split(','),
+//     link: req.body.link,
+//     slug : req.body.name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'-')
+//   }
+
+//   if (req.body.hasGlasses == 'yes') personObj['hasGlasses'] = true;
+//   else personObj['hasGlasses'] = false;
+
+
+//   // NOW, we need to deal with the image
+//   // the contents of the image will come in req.files (not req.body)
+//   var filename = req.files.image.name; // actual filename of file
+//   var path = req.files.image.path; // will be put into a temp directory
+//   var mimeType = req.files.image.type; // image/jpeg or actual mime type
   
-  // create a cleaned file name to store in S3
-  // see cleanFileName function below
-  var cleanedFileName = cleanFileName(filename);
+//   // create a cleaned file name to store in S3
+//   // see cleanFileName function below
+//   var cleanedFileName = cleanFileName(filename);
 
-  // We first need to open and read the uploaded image into a buffer
-  fs.readFile(path, function(err, file_buffer){
+//   // We first need to open and read the uploaded image into a buffer
+//   fs.readFile(path, function(err, file_buffer){
 
-    // reference to the Amazon S3 Bucket
-    var s3bucket = new AWS.S3({params: {Bucket: awsBucketName}});
+//     // reference to the Amazon S3 Bucket
+//     var s3bucket = new AWS.S3({params: {Bucket: awsBucketName}});
     
-    // Set the bucket object properties
-    // Key == filename
-    // Body == contents of file
-    // ACL == Should it be public? Private?
-    // ContentType == MimeType of file ie. image/jpeg.
-    var params = {
-      Key: cleanedFileName,
-      Body: file_buffer,
-      ACL: 'public-read',
-      ContentType: mimeType
-    };
+//     // Set the bucket object properties
+//     // Key == filename
+//     // Body == contents of file
+//     // ACL == Should it be public? Private?
+//     // ContentType == MimeType of file ie. image/jpeg.
+//     var params = {
+//       Key: cleanedFileName,
+//       Body: file_buffer,
+//       ACL: 'public-read',
+//       ContentType: mimeType
+//     };
     
-    // Put the above Object in the Bucket
-    s3bucket.putObject(params, function(err, data) {
-      if (err) {
-        console.log(err)
-        return;
-      } else {
-        console.log("Successfully uploaded data to s3 bucket");
+//     // Put the above Object in the Bucket
+//     s3bucket.putObject(params, function(err, data) {
+//       if (err) {
+//         console.log(err)
+//         return;
+//       } else {
+//         console.log("Successfully uploaded data to s3 bucket");
 
-        // now that we have the image
-        // we can add the s3 url our person object from above
-        personObj['imageUrl'] = s3Path + cleanedFileName;
+//         // now that we have the image
+//         // we can add the s3 url our person object from above
+//         personObj['imageUrl'] = s3Path + cleanedFileName;
 
-        // now, we can create our person instance
-        var person = new Person(personObj);
+//         // now, we can create our person instance
+//         var person = new Person(personObj);
 
-        person.save(function(err,data){
-          if(err){
-            var error = {
-              status: "ERROR",
-              message: err
-            }
-            return res.json(err)
-          }
+//         person.save(function(err,data){
+//           if(err){
+//             var error = {
+//               status: "ERROR",
+//               message: err
+//             }
+//             return res.json(err)
+//           }
 
-          var jsonData = {
-            status: "OK",
-            person: data
-          }
+//           var jsonData = {
+//             status: "OK",
+//             person: data
+//           }
 
-          return res.json(jsonData);        
-        })
+//           return res.json(jsonData);        
+//         })
 
-      }
+//       }
 
-    }); // end of putObject function
+//     }); // end of putObject function
 
-  });// end of read file
+//   });// end of read file
 
-})
+// })
 
 function cleanFileName (filename) {
     
@@ -366,53 +353,53 @@ function cleanFileName (filename) {
     
 }
 
-router.get('/api/get', function(req,res){
+// router.get('/api/get', function(req,res){
 
-  Person.find(function(err,data){
+//   Person.find(function(err,data){
 
-      if(err){
-        var error = {
-          status: "ERROR",
-          message: err
-        }
-        return res.json(err)
-      }
+//       if(err){
+//         var error = {
+//           status: "ERROR",
+//           message: err
+//         }
+//         return res.json(err)
+//       }
 
-      var jsonData = {
-        status: "OK",
-        people: data
-      }
+//       var jsonData = {
+//         status: "OK",
+//         people: data
+//       }
 
-      return res.json(jsonData);
+//       return res.json(jsonData);
 
-  })
+//   })
 
-})
+// })
 
-router.get('/api/get/year/:itpYear',function(req,res){
+// router.get('/api/get/year/:itpYear',function(req,res){
 
-  var requestedITPYear = req.params.itpYear;
+//   var requestedITPYear = req.params.itpYear;
 
-  console.log(requestedITPYear);
+//   console.log(requestedITPYear);
 
-  Person.find({itpYear:requestedITPYear},function(err,data){
-      if(err){
-        var error = {
-          status: "ERROR",
-          message: err
-        }
-        return res.json(err)
-      }
+//   Person.find({itpYear:requestedITPYear},function(err,data){
+//       if(err){
+//         var error = {
+//           status: "ERROR",
+//           message: err
+//         }
+//         return res.json(err)
+//       }
 
-      var jsonData = {
-        status: "OK",
-        people: data
-      }
+//       var jsonData = {
+//         status: "OK",
+//         people: data
+//       }
 
-      return res.json(jsonData);    
-  })
+//       return res.json(jsonData);    
+//   })
 
-})
+// })
 
 // example query --> /api/get/query?itpYear=2016&name=Sam
 // --> itpYear=2016

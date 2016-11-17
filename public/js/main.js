@@ -30,42 +30,39 @@ function taskParse(task){
 // runs from eventlistener from input, which runs getTask() 
 // console.log(task);
 
-var taskType = task.match(/^#find|#buy|#transcribe|#call^/);
-
+var taskType = task.match(/^#find|#buy|#transcribe|#call$/);
+	console.log(taskType)
 	if(taskType){
-		findTask = task.match(/#find/g);		
-		buyTask = task.match(/#buy/g);
-		transcribeTask = task.match(/#transcribe/g);
-		callTask = task.match(/#call/g);
-		
-		if (findTask){
-			findCounter++;
-			console.log("findCounter is "+findCounter);
-		} else if (buyTask){
-			buyCounter++;
-			console.log("buyCounter is "+buyCounter);
-		} else if (transcribeTask){
-			transcribeCounter++;
-			console.log("transcribeCounter is "+transcribeCounter);
-		} else if (callTask){
-			callCounter++;
-			console.log("callCounter is "+callCounter);
-		}
 
+		// split task by spaces and input in array
+		var taskArray = task.split(" ");
+		// search through array find #matches
+		for(var i=0; i < taskArray.length; i++){
+			
+			if(taskArray[i] == "#find"){
+				findCounter++; console.log("findCounter is "+findCounter);
+			} else if (taskArray[i] == "#call"){
+				callCounter++; console.log("callCounter is "+callCounter);
+			} else if (taskArray[i] == "#buy"){
+				buyCounter++; console.log("buyCounter is "+buyCounter);
+			} else if (taskArray[i] == "#transcribe"){
+				transcribeCounter++; console.log("transcribeCounter is "+transcribeCounter);
+			}
+		
+		}
 
 	} else {
 
-		var warningDiv = document.getElementById('warning');
-		    	warningDiv.style.display = 'block';
-		    	return setTimeout(function(){ 
-		    		$("#warning").fadeOut(); }, 
-		    	6000);	 
+	var warningDiv = document.getElementById('warning');
+	    	warningDiv.style.display = 'block';
+	    	return setTimeout(function(){ 
+	    		$("#warning").fadeOut(); }, 
+	    	6000);	 
 	}
 
 
 	timeNow = timeStamp();
-	
-	console.log("timeNow: "+timeNow);
+	// console.log("timeNow: "+timeNow);
 
 	// parameters to pass to card: (i) task (ii) time stamp (iii) location 
 	addCard(task, timeNow, userLocation);
@@ -236,15 +233,18 @@ jQuery("#addForm").submit(function(e){
 error: text overflows card
 error: repeat file image prints 
 
-0. create data storage var task = {"buy" : 1, "call" : 0, "find" : 0}
-1. create Task ID
-1. Sentiment analysis
-2. webRTC push to talk
-3. tweet task to dashboard
-4. VA dashboard, parses task category
-5. Counter for task category to record VA preferences
-6. @taday to call task type progress bar
-7. Chart.js visuals 
+
+1. search
+2. create data storage var task = {"buy" : 1, "call" : 0, "find" : 0}
+3. create Task ID
+4. Saving images to database
+5. Sentiment analysis
+6. webRTC push to talk
+7. tweet task to dashboard
+8. VA dashboard, parses task category
+9. Counter for task category to record VA preferences
+10. @taday to call task type progress bar
+11. Chart.js visuals 
 
 */
 
