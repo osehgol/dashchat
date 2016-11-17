@@ -4,10 +4,9 @@ var Schema = mongoose.Schema;
 // See http://mongoosejs.com/docs/schematypes.html
 
 var taskSchema = new Schema({
-	title: String,
-	taskBody: String,
-	taskTag: String,	
+	task: String,	
 	location: String,
+	file: String,
 	dateAdded: {type: Date, default: Date.now}
 	// ????????can i do time.join????????
 });

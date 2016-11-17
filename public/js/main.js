@@ -1,12 +1,14 @@
 // CUSTOM JS FILE //
 
 function init() {
-  renderPeeps();
+  // renderPeeps();
+  getLocation();
 }
 
 var findTask, buyTask, transcribeTask, callTask;
 var timeNow;
-var userLocation; // Slover: I've added a variable to hold the location 
+var userLocation; 
+var files, f; 
 var fileOutput = [];
 var findCounter = 0;
 var buyCounter = 0;
@@ -26,7 +28,7 @@ function getTask(event){
 
 function taskParse(task){
 // runs from eventlistener from input, which runs getTask() 
-console.log(task);
+// console.log(task);
 
 var taskType = task.match(/^#find|#buy|#transcribe|#call^/);
 
@@ -35,10 +37,7 @@ var taskType = task.match(/^#find|#buy|#transcribe|#call^/);
 		buyTask = task.match(/#buy/g);
 		transcribeTask = task.match(/#transcribe/g);
 		callTask = task.match(/#call/g);
-		// console.log(findTask);
-		// console.log(buyTask);
-		console.log(callTask);
-
+		
 		if (findTask){
 			findCounter++;
 			console.log("findCounter is "+findCounter);
@@ -65,7 +64,7 @@ var taskType = task.match(/^#find|#buy|#transcribe|#call^/);
 
 
 	timeNow = timeStamp();
-	getLocation();
+	
 	console.log("timeNow: "+timeNow);
 
 	// parameters to pass to card: (i) task (ii) time stamp (iii) location 
@@ -80,11 +79,7 @@ function getLocation(){
     $.getJSON('https://geoip-db.com/json/geoip.php?jsonp=?') 
          .done (function(location)
          {
-         		// console.log(location);
-         		// Slover: store the location in the userLocation variable
-         		userLocation = location.city + " " + location.country_code;
-         		// console.log('the user location is --> '+ userLocation); 
-         		// now you can do what you want with the userLocation valuable 
+         		userLocation = location.city + " , " + location.country_code;
          });
 }
 
@@ -156,10 +151,10 @@ function handleFileSelect(evt) {
 	evt.stopPropagation();
 	evt.preventDefault();
 
-	var files = evt.dataTransfer.files; // FileList object.
+	files = evt.dataTransfer.files; // FileList object.
 
 	// files is a FileList of File objects. List some properties.
-	for (var i = 0, f; f = files[i]; i++) {
+	for (var i = 0; f = files[i]; i++) {
 	  fileOutput.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
 	              f.size, ' bytes, last modified: ',
 	              f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
@@ -179,30 +174,35 @@ function handleDragOver(evt) {
 var dropZone = document.getElementById('card-holder');
 dropZone.addEventListener('dragover', handleDragOver, false);
 dropZone.addEventListener('drop', handleFileSelect, false);
+// dropZone.addEventListener('drop', customPOST, false);
 
 // module.exports = router;
-
 
 // For making POST request to /dashboard via JQUERY
 
 jQuery("#addForm").submit(function(e){
 
 	// first, let's pull out all the values
+
 	// the name form field value
 	var task = jQuery("#theInput").val();
-	
+	var location = getLocation();
+	var file = f;
 
-		// make sure we have a location
-	if(!location || location=="") return alert('We need a location!');
+	// make sure we have a location
+	if(!userLocation || userLocation=="") return alert('We need a location!');
 
 	// POST the data from above to our API create route
   jQuery.ajax({
   	url : '/dashboard',
   	dataType : 'json',
   	type : 'POST',
+
   	// we send the data in a data object (with key/value pairs)
   	data : {
-  		task : task
+  		task : task,
+  		location: userLocation,
+ 		file: fileOutput
   	},
   	success : function(response){
   		if(response.status=="OK"){
@@ -250,33 +250,33 @@ error: repeat file image prints
 
 
 
-function renderPeeps(){
-	jQuery.ajax({
-		url : '/api/get',
-		dataType : 'json',
-		success : function(response) {
-			console.log(response);
+// function renderPeeps(){
+// 	jQuery.ajax({
+// 		url : '/api/get',
+// 		dataType : 'json',
+// 		success : function(response) {
+// 			console.log(response);
 
-			var people = response.people;
+// 			var people = response.people;
 
-			for(var i=0;i<people.length;i++){
-				var htmlToAdd = '<div class="col-md-4">'+
-					'<img src='+people[i].imageUrl+' width="100">'+
-					'<h1>'+people[i].name+'</h1>'+
-					'<ul>'+
-						'<li>Year: '+people[i].itpYear+'</li>'+
-						'<li>Interests: '+people[i].interests+'</li>'+
-					'</ul>'+
-					'<a href="/edit/'+people[i]._id+'">Edit Person</a>'+
-				'</div>';
+// 			for(var i=0;i<people.length;i++){
+// 				var htmlToAdd = '<div class="col-md-4">'+
+// 					'<img src='+people[i].imageUrl+' width="100">'+
+// 					'<h1>'+people[i].name+'</h1>'+
+// 					'<ul>'+
+// 						'<li>Year: '+people[i].itpYear+'</li>'+
+// 						'<li>Interests: '+people[i].interests+'</li>'+
+// 					'</ul>'+
+// 					'<a href="/edit/'+people[i]._id+'">Edit Person</a>'+
+// 				'</div>';
 			
-				jQuery("#people-holder").append(htmlToAdd);
-			}
+// 				jQuery("#people-holder").append(htmlToAdd);
+// 			}
 
 
 
-		}
-	})	
-}
+// 		}
+// 	})	
+// }
 
 window.addEventListener('load', init())

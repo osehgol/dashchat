@@ -56,12 +56,22 @@ router.get('/dashboard', function(req, res) {
 router.post('/dashboard', function(req,res){
 
   console.log(req.body);
-  // var taskObject = {
-  //   title: title,
-  //   taskBody: taskBody,
-  //   taskType: taskTag,
-  //   dateAdded: 
-  // }
+
+  var taskObject = {
+    task: req.body.task,
+    location: req.body.location,
+    file: req.body.file 
+  }
+
+  var task = new Task(taskObject);
+
+  task.save(function(err,data){
+    // err
+    if(err) console.log('we have error -> ' + err);
+
+    // let's log out what just got saved
+    console.log(data);
+  });
 
 
 });
