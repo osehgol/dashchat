@@ -1,5 +1,8 @@
 // CUSTOM JS FILE //
 
+// set up socket.io
+var socket = io();
+
 function init() {
   // renderPeeps();
   getLocation();
@@ -30,7 +33,7 @@ function taskParse(task){
 // runs from eventlistener from input, which runs getTask() 
 // console.log(task);
 
-var taskType = task.match(/^#find|#buy|#transcribe|#call$/);
+var taskType = task.match(/^#find|#buy|#transcribe|#call|#Find|#Buy|#Transcribe|#Call$/);
 	console.log(taskType)
 	if(taskType){
 
@@ -39,13 +42,13 @@ var taskType = task.match(/^#find|#buy|#transcribe|#call$/);
 		// search through array find #matches
 		for(var i=0; i < taskArray.length; i++){
 			
-			if(taskArray[i] == "#find"){
+			if(taskArray[i] == "#find" || taskArray[i] == "#Find"){
 				findCounter++; console.log("findCounter is "+findCounter);
-			} else if (taskArray[i] == "#call"){
+			} else if (taskArray[i] == "#call" || taskArray[i] == "#Call"){
 				callCounter++; console.log("callCounter is "+callCounter);
-			} else if (taskArray[i] == "#buy"){
+			} else if (taskArray[i] == "#buy" || taskArray[i] == "#Buy"){
 				buyCounter++; console.log("buyCounter is "+buyCounter);
-			} else if (taskArray[i] == "#transcribe"){
+			} else if (taskArray[i] == "#transcribe" || taskArray[i] == "#Transcribe"){
 				transcribeCounter++; console.log("transcribeCounter is "+transcribeCounter);
 			}
 		
@@ -57,7 +60,7 @@ var taskType = task.match(/^#find|#buy|#transcribe|#call$/);
 	    	warningDiv.style.display = 'block';
 	    	return setTimeout(function(){ 
 	    		$("#warning").fadeOut(); }, 
-	    	6000);	 
+	    	3000);	 
 	}
 
 
@@ -66,6 +69,8 @@ var taskType = task.match(/^#find|#buy|#transcribe|#call$/);
 
 	// parameters to pass to card: (i) task (ii) time stamp (iii) location 
 	addCard(task, timeNow, userLocation);
+
+
 
 }
 
@@ -83,7 +88,6 @@ function getLocation(){
 function addCard(task, timeNow, userLocation){
 
 	var htmlToAppend = 
-	'<form method="post" action="/dashboard">'+
     '<div class="card-container col-sm-offset-4 col-md-offset-4">'+
       '<div class="card">'+
         // '<img src="img/'+userLocation+'.png">'+
@@ -97,6 +101,11 @@ function addCard(task, timeNow, userLocation){
     console.log("taskCounter "+taskCounter);
     
 	return $('#card-holder').prepend(htmlToAppend);
+
+	// send cardHTML to server via socket
+	if(transcribeCounter > 0){
+		socket.emit('new transcribe task', htmlToAppend);
+	}
 
 }
 document.getElementById('theInput').addEventListener('change', getTask);
@@ -175,7 +184,7 @@ dropZone.addEventListener('drop', handleFileSelect, false);
 
 // module.exports = router;
 
-// For making POST request to /dashboard via JQUERY
+// For making POST request to /live via JQUERY
 
 jQuery("#addForm").submit(function(e){
 
@@ -191,7 +200,7 @@ jQuery("#addForm").submit(function(e){
 
 	// POST the data from above to our API create route
   jQuery.ajax({
-  	url : '/dashboard',
+  	url : '/live',
   	dataType : 'json',
   	type : 'POST',
 

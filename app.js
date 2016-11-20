@@ -9,6 +9,9 @@ var env = require('node-env-file');
 
 var app = express();
 
+// call socket.io to app (express) socket portion
+app.io = require('socket.io')();
+
 // if in development mode, load .env variables
 if (app.get("env") === "development") {
     env(__dirname + '/.env');
@@ -32,6 +35,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 // our routes will be contained in routes/index.js
 var routes = require('./routes/index');
 app.use('/', routes);
@@ -43,6 +47,20 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+
+// start listening with socket.io
+app.io.on('connection', function(socket){
+
+  console.log('a user is connected '+socket.id);
+
+  socket.on('new transcribe task', function(htmlToAppend){
+
+     console.log('new searchTerm: ' + searchTerm);
+
+  } );
+
+});
+
 
 // error handlers
 

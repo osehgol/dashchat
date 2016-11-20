@@ -27,13 +27,13 @@ var multipartMiddleware = multipart();
 router.get('/', function(req, res){
   console.log('forward slash / requested');
 
-  res.redirect('/dashboard');
+  res.redirect('/live');
 });
 
-// GET /dashboard
-router.get('/dashboard', function(req, res) {
+// GET /live
+router.get('/live', function(req, res) {
 
-  console.log('dashboard requested!');
+  console.log('/live requested!');
 
   // var jsonData = {
   //   'name': 'itp-directory',
@@ -47,13 +47,23 @@ router.get('/dashboard', function(req, res) {
   //res.redirect('/directory')
 
   // respond with html
-  res.render('dashboard.html')
+  res.render('live.html')
+
+});
+
+// GET /live
+router.get('/live_transcribe', function(req, res) {
+
+  console.log('/live_transcribe requested!');
+
+  // respond with html
+  res.render('live_transcribe.html')
 
 });
 
 // TYPE TASK creates router.post request
 
-router.post('/dashboard', function(req,res){
+router.post('/live', function(req,res){
 
   console.log(req.body);
 
