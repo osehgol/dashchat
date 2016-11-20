@@ -1,7 +1,8 @@
 // CUSTOM JS FILE //
 
 // set up socket.io
-var socket = io();
+var socket = io.connect('http://localhost.dev:3005');
+
 
 function init() {
   // renderPeeps();
@@ -166,6 +167,8 @@ function handleFileSelect(evt) {
 	              f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
 	              '</li>');
 	}
+
+
 	return $('.card').append('<font color="blue">' + fileOutput.join('') + '</font>');
 }
 
@@ -187,14 +190,18 @@ dropZone.addEventListener('drop', handleFileSelect, false);
 // For making POST request to /live via JQUERY
 
 jQuery("#addForm").submit(function(e){
-
 	// first, let's pull out all the values
-
 	// the name form field value
 	var task = jQuery("#theInput").val();
-	var location = getLocation();
-	var file = f;
+	var location = userLocation;
+	var file = files;
 
+	console.log(task);
+	console.log(location);
+	console.log(file);
+	// console.log(file);
+	// console.log(fileName);
+			// console.log(filePath);
 	// make sure we have a location
 	if(!userLocation || userLocation=="") return alert('We need a location!');
 
@@ -237,12 +244,15 @@ jQuery("#addForm").submit(function(e){
 });
 
 
+// <form method="post" action="/api/create/image" id="myForm" enctype="multipart/form-data">
 
 /*
 error: text overflows card
 error: repeat file image prints 
 
-
+0. file image storage
+//set upload image option
+// create router post to aws (in index.js here, https://github.com/sslover/class-example-itp-directory/blob/master/routes/index.js)
 1. search
 2. create data storage var task = {"buy" : 1, "call" : 0, "find" : 0}
 3. create Task ID
