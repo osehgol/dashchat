@@ -106,14 +106,13 @@ function addCard(task, timeNow, userLocation){
 
     taskCounter++;
     console.log("taskCounter "+taskCounter);
-    
-	return $('#card-holder').prepend(htmlToAppend);
 
-	// send cardHTML to server via socket
-
+    // send cardHTML to server via socket
 	if(transcribeCounter > 0){
 		socket.emit('new transcribe task', htmlToAppend);
 	}
+    
+	return $('#card-holder').prepend(htmlToAppend);
 
 }
 document.getElementById('theInput').addEventListener('change', getTask);
@@ -194,6 +193,10 @@ dropZone.addEventListener('drop', handleFileSelect, false);
 
 // module.exports = router;
 
+
+
+
+
 // For making POST request to /live via JQUERY
 
 jQuery("#addForm").submit(function(e){
@@ -203,6 +206,7 @@ jQuery("#addForm").submit(function(e){
 	var location = userLocation;
 	var file = files;
 
+	// console.log(e.body.name);
 	console.log(task);
 	console.log(location);
 	console.log(file);
@@ -211,6 +215,29 @@ jQuery("#addForm").submit(function(e){
 			// console.log(filePath);
 	// make sure we have a location
 	if(!userLocation || userLocation=="") return alert('We need a location!');
+
+
+	// ANOTHER WAY OF HANDLING FILE UPLOAD
+var fd = new FormData();    
+
+console.log(fd);
+// pull out the file form the 'image' field of the form;
+// in the second argument, actually grab the file itself
+
+fd.append('image', $('input[type=file]')[0].files[0]);
+
+
+// now post it
+$.ajax({
+  url: '/api/create'
+  data: fd,
+  processData: false, // you need this 
+  contentType: false, // you need this
+  type: 'POST', // you need this
+  success: function(data){
+    alert(data);
+  }
+});
 
 	// POST the data from above to our API create route
   jQuery.ajax({

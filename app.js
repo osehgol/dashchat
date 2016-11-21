@@ -55,7 +55,7 @@ app.io.on('connection', function(socket){
 
   socket.on('new transcribe task', function(htmlToAppend){
 
-     console.log('new searchTerm: ' + searchTerm);
+     console.log('new transcribe task ' + htmlToAppend);
 
   } );
 
