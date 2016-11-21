@@ -90,20 +90,27 @@ function addCard(task, timeNow, userLocation){
 
 	var htmlToAppend = 
     '<div class="card-container col-sm-offset-4 col-md-offset-4">'+
-      '<div class="card">'+
+      '<div class="card" "form-group">'+
         // '<img src="img/'+userLocation+'.png">'+
           '<h2>'+task+'<br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
+	      '<label class="btn btn-default btn-file">'+
+	      ' <span class="glyphicon glyphicon-upload"></span>'+
+   		  '<input type="file" id="image" style="display: none;">'+
+		  '</label>'+
+	      '</div>'+
       '</div>'+
-    '</div>'+
-    '</form>'
+    '</div>'
+ 
+
     taskCounter++;
     console.log("taskCounter "+taskCounter);
     
 	return $('#card-holder').prepend(htmlToAppend);
 
 	// send cardHTML to server via socket
+
 	if(transcribeCounter > 0){
 		socket.emit('new transcribe task', htmlToAppend);
 	}

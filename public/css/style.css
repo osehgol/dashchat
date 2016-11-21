@@ -18,6 +18,11 @@ body {
   display: none;
 }
 
+#image {
+  font-size: 15px;
+  padding: 0px 12px;
+}
+
 input{
   padding: 15px;
   padding-left: 30px;
