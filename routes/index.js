@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 
+//sentiment analysis
+var sentiment = require('sentiment');
+// var r1 = sentiment('Cats are stupid.');
+// console.dir(r1); 
+
 // our db models
 var Person = require("../models/person.js");
 var Course = require("../models/course.js");
@@ -75,6 +80,9 @@ router.post('/live', function(req,res){
   }
 
   var task = new Task(taskObject);
+
+  var r1 = sentiment(taskObject.task);
+  console.dir(r1);
 
   task.save(function(err,data){
     // err
