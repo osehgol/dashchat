@@ -1,15 +1,22 @@
 // CUSTOM JS FILE //
 
-// set up socket.io
-var socket = io.connect('http://localhost.dev:3005');
+/*
+problems:
+ajax success: function not being called
+consequently addCard() not adding
+have written file upload code, but not able to test it
 
+*/
+// set up socket.io
+var socket = io();
 
 function init() {
-  // renderPeeps();
+  document.getElementById('theInput').addEventListener('change', getTask);
   getLocation();
 }
 
 var findTask, buyTask, transcribeTask, callTask;
+var id; // the current id of the task
 var timeNow;
 var userLocation; 
 var files, f; 
@@ -25,9 +32,84 @@ function getTask(event){
 	var val = document.getElementById('theInput').value;
 	// if there is no value, or it is an empty string, prompt the user
 	if(!val || val=="") return alert("Enter Task Please");
+
+	// SLOVER -- > save to database here, and then on SUCCESS run the logic to post on the page
+	// added by Osama
+	// For making POST request to /live via JQUERY
+
+		jQuery("#addForm").submit(function(e){
+			// first, let's pull out all the values
+			// the name form field value
+			var task = jQuery("#theInput").val();
+			var location = userLocation;
+			var file = files;
+			var timeNow = timeStamp();
+
+			// console.log(e.body.name);
+			console.log(task);
+			console.log(location);
+			taskParse(task);
+
+			 // send cardHTML to server via socket
+			if(transcribeCounter > 0 || callCounter > 0 || findCounter > 0 || buyCounter > 0){
+				socket.emit('new valid task', task);
+			}
+    
+		
+			// POST the data from above to our API create route
+		  jQuery.ajax({
+		  	url : '/live',
+		  	dataType : 'jsonp',
+		  	type : 'POST',
+		  	data : {
+		  		task : task,
+		  		location: userLocation,
+		 		file: fileOutput,
+		 		time: timeNow
+		  	},
+		  	success: function(response){
+		  		addCard(task, timeNow, location);
+		  		console.log("sucess ran");
+		  		alert("Hey");
+		  		//addCard not working
+			  	// 	addCard(data.task, data.time, data.location);
+			  	// 	if(response.status=="OK"){
+			  // 		// success
+			  // 		// SLOVER --> THIS IS WHERE YOU SHOULD RENDER THE CARD
+			  // 		// added by Osama			  		
+					// // parameters to pass to card: (i) task (ii) time stamp (iii) location 
+					// addCard(data.task, data.time, data.location);
+
+			  // 		// in success, let our sockets know we have new data
+			  // 		socket.emit('new transcribe task', response);
+			  // 		id = response._id;
+			  // 		console.log(id);
+			  // 		// now, clear the input fields
+			  // 		jQuery("#addForm input").val('');
+		  	// 	}
+		  	// 	else {
+		  	// 		alert("something went wrong");
+		  	// 	}
+		  	},
+		  	error : function(err){
+		  		// do error checking
+		  		alert("something went wrong");
+		  		console.error(err);
+		  	}
+		  });
+
+			// prevents the form from submitting normally
+		  e.preventDefault();
+		  return false;
+
+		});
+
+
+	// SLOVER -- > USE the values that have been saved to the database 
+
 	// console.log("the value is " + val);	
 	// else, need to geocode it 
-	taskParse(val);
+	// taskParse(val);
 }
 
 function taskParse(task){
@@ -68,11 +150,6 @@ var taskType = task.match(/^#find|#buy|#transcribe|#call|#Find|#Buy|#Transcribe|
 	timeNow = timeStamp();
 	// console.log("timeNow: "+timeNow);
 
-	// parameters to pass to card: (i) task (ii) time stamp (iii) location 
-	addCard(task, timeNow, userLocation);
-
-
-
 }
 
 // Slover: this now runs on the page load, 
@@ -99,6 +176,7 @@ function addCard(task, timeNow, userLocation){
 	      ' <span class="glyphicon glyphicon-upload"></span>'+
    		  '<input type="file" id="image" style="display: none;">'+
 		  '</label>'+
+		  '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'
 	      '</div>'+
       '</div>'+
     '</div>'
@@ -107,17 +185,9 @@ function addCard(task, timeNow, userLocation){
     taskCounter++;
     console.log("taskCounter "+taskCounter);
 
-    // send cardHTML to server via socket
-	if(transcribeCounter > 0){
-		socket.emit('new transcribe task', htmlToAppend);
-	}
-    
 	return $('#card-holder').prepend(htmlToAppend);
 
 }
-document.getElementById('theInput').addEventListener('change', getTask);
-// document.getElementById('sendButton').addEventListener('click', getTask);
-
 
 /**
  * Return a timestamp with the format "m/d/yy h:MM:ss TT"
@@ -160,125 +230,172 @@ function timeStamp() {
 File drag drop feature is from https://www.html5rocks.com/en/tutorials/file/dndfiles/
 */
 
-function handleFileSelect(evt) {
-	evt.stopPropagation();
-	evt.preventDefault();
+// function handleFileSelect(evt) {
+// 	evt.stopPropagation();
+// 	evt.preventDefault();
 
-	files = evt.dataTransfer.files; // FileList object.
+// 	files = evt.dataTransfer.files; // FileList object.
 
-	// files is a FileList of File objects. List some properties.
-	for (var i = 0; f = files[i]; i++) {
-	  fileOutput.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
-	              f.size, ' bytes, last modified: ',
-	              f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
-	              '</li>');
-	}
+// 	console.log(files);
+// 	console.log(evt.dataTransfer);
+
+// 	// SLOVER PULL OUT THE ID
+// 	var idToUpdate = $(evt.target).find('.idOfData').text();
+// 	if(!idToUpdate || idToUpdate == null || idToUpdate == ''); idToUpdate = $(evt.target).closest('.idOfData').text();
+// 	console.log(evt.target);
+// 	console.log('the id is --> ' + idToUpdate);
+// 	console.log(typeof idToUpdate);
+
+// 	// files is a FileList of File objects. List some properties.
+// 	for (var i = 0; f = files[i]; i++) {
+// 	  fileOutput.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+// 	              f.size, ' bytes, last modified: ',
+// 	              f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+// 	              '</li>');
+// 	}
 
 
-	return $('.card').append('<font color="blue">' + fileOutput.join('') + '</font>');
-}
+// 	$('.card').append('<font color="blue">' + fileOutput.join('') + '</font>');
 
-function handleDragOver(evt) {
-	evt.stopPropagation();
-	evt.preventDefault();
-	evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-	// console.log("dragover success");
-}
+
+// 	// SLOVER COMMENTS
+
+// 	// 1. NEED TO ACTUALLY READ THE FILE CONTENTS USING SOMETHING LIKE THIS https://www.sitepoint.com/html5-file-drag-drop-read-analyze-upload-progress-bars/
+// 	// 2. NEED TO POST THE FILE TO THE SERVER WITH AN /API/UPDATE/id METHOD
+// 	// 3. PULL THE ID OUT OF THE HTML FOR THAT GIVEN RECORD
+// 	// var id = $(element).find('.idOfData').text();
+
+// 	// // ANOTHER WAY OF HANDLING FILE UPLOAD
+// 	// var fd = new FormData();    
+
+// 	// console.log(fd);
+// 	// // pull out the file form the 'image' field of the form;
+// 	// // in the second argument, actually grab the file itself
+
+// 	// fd.append('image', $('input[type=file]')[0].files[0]);
+
+
+
+// 	// // now post it
+// 	// $.ajax({
+// 	//   url: '/api/update/'+idToUpdate,
+// 	//   data: fd,
+// 	//   processData: false, // you need this 
+// 	//   contentType: false, // you need this
+// 	//   type: 'POST', // you need this
+// 	//   success: function(data){
+// 	//     alert(data);
+// 	//   }
+// 	// });	
+// }
+
+// function handleDragOver(evt) {
+// 	evt.stopPropagation();
+// 	evt.preventDefault();
+// 	evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+// 	// console.log("dragover success");
+// }
 
 // Setup the dnd listeners.
-var dropZone = document.getElementById('card-holder');
-dropZone.addEventListener('dragover', handleDragOver, false);
-dropZone.addEventListener('drop', handleFileSelect, false);
+// var dropZone = document.getElementById('card-holder');
+// dropZone.addEventListener('dragover', handleDragOver, false);
+// dropZone.addEventListener('drop', handleFileSelect, false);
 // dropZone.addEventListener('drop', customPOST, false);
 
-// module.exports = router;
+//FILE DRAG DROP EVENT HANDLIGN FROM https://www.sitepoint.com/html5-file-drag-drop-read-analyze-upload-progress-bars/
+
+if (window.File && window.FileList && window.FileReader) { 
+
+		document.getElementById("card-holder").addEventListener("change", FileSelectHandler, false);
+		document.getElementById("card-holder").addEventListener("drop", FileSelectHandler, false);
+
+		function FileSelectHandler(e) {
+
+		// cancel event default
+		e.preventDefault();
+
+		// cancel event and hover styling
+		FileDragHover(e);
 
 
 
+		// fetch FileList object
+		var files = e.target.files || e.dataTransfer.files;
 
+			// process all File objects
+			for (var i = 0, file; file = files[i]; i++) {
+				  fileOutput.push('<li><strong>', escape(file.name), '</strong> (', file.type || 'n/a', ') - ',
+				              file.size, ' bytes, last modified: ',
+				              file.lastModifiedDate ? file.lastModifiedDate.toLocaleDateString() : 'n/a',
+				              '</li>');
 
-// For making POST request to /live via JQUERY
+					  if (file.type.indexOf("text") == 0) {
+					    var reader = new FileReader();
+					    reader.onload = function(e) {
+							// get file content
+							var text = e.target.result;
+							//do something with it
+					    }
+					    reader.readAsText(file);
+					  } else if (file.type.indexOf("image") == 0) {
+					    var reader = new FileReader();
+					    reader.onload = function(e) {
 
-jQuery("#addForm").submit(function(e){
-	// first, let's pull out all the values
-	// the name form field value
-	var task = jQuery("#theInput").val();
-	var location = userLocation;
-	var file = files;
+					    	//display image in place of card
+							document.getElementById("card-holder").src = e.target.result;
+					    }
+					    reader.readAsDataURL(file);
+					}
+					//progress bar
+					function ProgressHandler(e) {
+						var complete = Math.round(e.loaded / e.total * 100);
+						console.log(complete + "% complete");
+					}
 
-	// console.log(e.body.name);
-	console.log(task);
-	console.log(location);
-	console.log(file);
-	// console.log(file);
-	// console.log(fileName);
-			// console.log(filePath);
-	// make sure we have a location
-	if(!userLocation || userLocation=="") return alert('We need a location!');
+					function UploadFile(file) {
 
+						var xhr = new XMLHttpRequest();
+						
+						if (xhr.upload && file.type == "image/jpeg" && file.size <= 10,000) {
 
-	// ANOTHER WAY OF HANDLING FILE UPLOAD
-var fd = new FormData();    
+							var o = document.getElementById("progress");
+							var progress = o.appendChild(document.createElement("p"));
+							progress.appendChild(document.createTextNode("upload " + file.name));
 
-console.log(fd);
-// pull out the file form the 'image' field of the form;
-// in the second argument, actually grab the file itself
+							// progress bar
+							xhr.upload.addEventListener("progress", function(e) {
+								var pc = parseInt(100 - (e.loaded / e.total * 100));
+								progress.style.backgroundPosition = pc + "% 0";
+							}, false);
 
-fd.append('image', $('input[type=file]')[0].files[0]);
+						//SEND FILE TO SERVER
 
+						}
 
-// now post it
-$.ajax({
-  url: '/api/create'
-  data: fd,
-  processData: false, // you need this 
-  contentType: false, // you need this
-  type: 'POST', // you need this
-  success: function(data){
-    alert(data);
-  }
-});
+					}
 
-	// POST the data from above to our API create route
-  jQuery.ajax({
-  	url : '/live',
-  	dataType : 'json',
-  	type : 'POST',
+			}
 
-  	// we send the data in a data object (with key/value pairs)
-  	data : {
-  		task : task,
-  		location: userLocation,
- 		file: fileOutput
-  	},
-  	success : function(response){
-  		if(response.status=="OK"){
-	  		// success
-	  		console.log(response);
-	  		// re-render the map
-	  		renderPlaces();
-	  		// now, clear the input fields
-	  		jQuery("#addForm input").val('');
-  		}
-  		else {
-  			alert("something went wrong");
-  		}
-  	},
-  	error : function(err){
-  		// do error checking
-  		alert("something went wrong");
-  		console.error(err);
-  	}
-  });
+		} //function FileSelectHandler ends
+} //Window FielList, FileReader if-statement ends
 
-	// prevents the form from submitting normally
-  e.preventDefault();
-  return false;
-
+// when a new task comes in, have the live transcribe receive it 
+socket.on('new valid task received', function(task){
+  // make a call to the database and re-render the tasks
+  console.log('new transcribe task --> ', task);
 });
 
 
-// <form method="post" action="/api/create/image" id="myForm" enctype="multipart/form-data">
+window.addEventListener('load', init());
+
+
+
+
+
+
+
+
+
 
 /*
 error: text overflows card
@@ -303,33 +420,6 @@ error: repeat file image prints
 
 
 
-// function renderPeeps(){
-// 	jQuery.ajax({
-// 		url : '/api/get',
-// 		dataType : 'json',
-// 		success : function(response) {
-// 			console.log(response);
-
-// 			var people = response.people;
-
-// 			for(var i=0;i<people.length;i++){
-// 				var htmlToAdd = '<div class="col-md-4">'+
-// 					'<img src='+people[i].imageUrl+' width="100">'+
-// 					'<h1>'+people[i].name+'</h1>'+
-// 					'<ul>'+
-// 						'<li>Year: '+people[i].itpYear+'</li>'+
-// 						'<li>Interests: '+people[i].interests+'</li>'+
-// 					'</ul>'+
-// 					'<a href="/edit/'+people[i]._id+'">Edit Person</a>'+
-// 				'</div>';
-			
-// 				jQuery("#people-holder").append(htmlToAdd);
-// 			}
 
 
 
-// 		}
-// 	})	
-// }
-
-window.addEventListener('load', init())

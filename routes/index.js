@@ -65,12 +65,13 @@ router.get('/live_transcribe', function(req, res) {
 
 router.post('/live', function(req,res){
 
-  console.log(req.body);
+  // console.log(req.body);
 
   var taskObject = {
     task: req.body.task,
     location: req.body.location,
-    file: req.body.file 
+    file: req.body.file, 
+    time: req.body.time
   }
 
   var task = new Task(taskObject);

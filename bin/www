@@ -22,6 +22,11 @@ app.set('port', port);
 var server = http.createServer(app);
 
 /**
+ * Attach socket.io
+ */
+app.io.attach(server); 
+
+/**
  * Listen on provided port, on all network interfaces.
  */
 
@@ -87,5 +92,4 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
-  console.log("listening on port 3005")
 }

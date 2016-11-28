@@ -7,6 +7,7 @@ var taskSchema = new Schema({
 	task: String,	
 	location: String,
 	file: String,
+	time: String,
 	dateAdded: {type: Date, default: Date.now}
 	// ????????can i do time.join????????
 });

@@ -9,7 +9,7 @@ var env = require('node-env-file');
 
 var app = express();
 
-// call socket.io to app (express) socket portion
+// call socket.io to the app
 app.io = require('socket.io')();
 
 // if in development mode, load .env variables
@@ -53,9 +53,11 @@ app.io.on('connection', function(socket){
 
   console.log('a user is connected '+socket.id);
 
-  socket.on('new transcribe task', function(htmlToAppend){
+  socket.on('new transcribe task', function(task){
 
-     console.log('new transcribe task ' + htmlToAppend);
+     console.log('new transcribe task ' + task);
+      // now emit the new tweet back to the client via the socket event 'new tweet'
+      app.io.emit('new transcribe task received', task);      
 
   } );
 
