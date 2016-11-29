@@ -15,6 +15,7 @@ var socket = io();
 function init() {
   document.getElementById('theInput').addEventListener('change', getTask);
   getLocation();
+  //addArt();
 }
 
 var findTask, buyTask, transcribeTask, callTask;
@@ -57,31 +58,22 @@ function getTask(event){
 				socket.emit('new valid task', task);
 			}
     
-		
+			var data = {
+		  		task : task,
+		  		location: userLocation,
+		 		time: timeNow
+		  	};
 			// POST the data from above to our API create route
 		  jQuery.ajax({
 		  	url : '/live',
-		  	dataType : 'jsonp',
+		  	dataType : 'json',
 		  	type : 'POST',
-		  	data : {
-		  		task : task,
-		  		location: userLocation,
-		 		file: fileOutput,
-		 		time: timeNow
-		  	},
+		  	data : data,
 		  	success: function(response){
 		  		addCard(task, timeNow, location);
 		  		console.log("sucess ran");
-		  		alert("Hey");
-		  		//addCard not working
-			  	// 	addCard(data.task, data.time, data.location);
-			  	// 	if(response.status=="OK"){
-			  // 		// success
-			  // 		// SLOVER --> THIS IS WHERE YOU SHOULD RENDER THE CARD
-			  // 		// added by Osama			  		
-					// // parameters to pass to card: (i) task (ii) time stamp (iii) location 
-					// addCard(data.task, data.time, data.location);
-
+		  		addArt();
+		  		
 			  // 		// in success, let our sockets know we have new data
 			  // 		socket.emit('new transcribe task', response);
 			  // 		id = response._id;
@@ -388,11 +380,15 @@ socket.on('new valid task received', function(task){
 });
 
 
-//RUNE.JS portion
+
+
+//Art for you
+function addArt(){
+	//RUNE.JS portion
 var r = new Rune({
   container: ".container",
-  width: 800,
-  height: 800
+  width: 200,
+  height: 200
 });
 
 // Create colors
@@ -417,9 +413,9 @@ var y = 0;
 
 while (x < 1000) {
   // increment x with a random amount
-  x += Rune.random(160, 350);
+  x += Rune.random(1, r.width-50);
   // use noise to find a y value from 500 to 600.
-  y = 500 + (noise.get(x / 500) * 500);
+  y = noise.get(x / 100) * (r.height-50);
   // push this point into the array
   linePoints.push(new Rune.Vector(x, y));
 }
@@ -436,8 +432,8 @@ r.on('update', function(){
       var bottomLeft = linePoints[i];
       var bottomRight = linePoints[i+1];
 
-      var ranHeightY = Rune.random(150,350);
-      var ranHeightX = Rune.random(150,350);
+      var ranHeightY = Rune.random(1,150);
+      var ranHeightX = Rune.random(1,150);
 
       var shape = [{fromVec: new Rune.Vector(bottomLeft.x, bottomLeft.y), toVec: new Rune.Vector(ranHeightX, ranHeightY)}];
 
@@ -479,8 +475,23 @@ r.on('update', function(){
 
 });
 
+	// background color
+	// http://stackoverflow.com/questions/27766343/change-background-color-every-30s-fade-transition
+	// document.body.style.backgroundColor = "white";
+
+	//Here's some Art for you
+	var bg = r.rect(0, 0, r.width, r.height);
+	var hue = 0;
+
+	r.on('update', function() {
+	  bg.fill('hsv', hue, 100, 100).stroke(false);
+	  hue++;
+	});
+
 
 r.play();
+
+}
 
 window.addEventListener('load', init());
 

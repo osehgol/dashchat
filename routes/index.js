@@ -90,8 +90,15 @@ router.post('/live', function(req,res){
 
     // let's log out what just got saved
     console.log(data);
-  });
 
+     var jsonData = {
+      status: "OK",
+      person: data
+     }
+
+    return res.json(jsonData);
+
+  });
 
 });
 
