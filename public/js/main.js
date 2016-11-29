@@ -2,10 +2,13 @@
 
 /*
 problems:
-- ajax success: function not being called
-- consequently addCard() not adding
+- re-posting twice card/json data post - http://stackoverflow.com/questions/13822322/jquery-how-to-clear-an-element-before-appending-new-content
+- WORKINGajax success: function not being called - working thanks to Sam
+- WORKING consequently addCard() not adding - working thanks to Sam
 - have written file upload code, but not able to test it
-- calling sentiment in main
+- WORKINGcalling sentiment in main - working!
+- generating json data (taskCounter) to support Chart.js viz 
+- 
 
 */
 
@@ -15,7 +18,6 @@ var socket = io();
 function init() {
   document.getElementById('theInput').addEventListener('change', getTask);
   getLocation();
-  //addArt();
 }
 
 var findTask, buyTask, transcribeTask, callTask;
@@ -71,8 +73,18 @@ function getTask(event){
 		  	data : data,
 		  	success: function(response){
 		  		addCard(task, timeNow, location);
-		  		console.log("sucess ran");
+		  		
+		  		console.log(response.sentiment);
 		  		addArt();
+		  		addRecursionArt();
+		  		// $("#card-holder")[0].reset();
+		  		// http://stackoverflow.com/questions/10633605/clear-form-values-after-submission-ajax
+		  		// $("#card-holder").html("");
+		  		// $("#card-holder").html(addCard());
+
+		  		// //empty card
+		  		// $("#card-holder").empty();
+
 		  		
 			  // 		// in success, let our sockets know we have new data
 			  // 		socket.emit('new transcribe task', response);
@@ -84,6 +96,13 @@ function getTask(event){
 		  	// 	else {
 		  	// 		alert("something went wrong");
 		  	// 	}
+		  	},
+		  	complete: function(){
+		  		// addCard(task, timeNow, location);
+		  		// http://stackoverflow.com/questions/15449751/clear-and-reload-div-with-data-via-ajax-and-jquery
+		  		// $("#card-holder").html("");
+		  		// $("#card-holder").html(addCard());
+
 		  	},
 		  	error : function(err){
 		  		// do error checking
@@ -491,6 +510,54 @@ r.on('update', function(){
 
 r.play();
 
+}
+
+
+function addRecursionArt(){
+
+	var r = new Rune({
+	  container: ".container",
+	  width: 200,
+	  height: 200
+	});
+
+	var maxLevel = 5;
+
+	var color1 = new Rune.Color(60, 100, 150);
+	var color2 = new Rune.Color(140, 180, 220);
+	var color3 = new Rune.Color(40, 40, 40);
+	var color4 = new Rune.Color(50, 60, 70);
+
+	var pattern = drawL(0, 0, 0, 600, 0, color1);
+
+	function drawL(x, y, rot, len, level, color, parent) {
+
+	  var layer = r.group(x, y, parent).rotate(rot, x, y);
+
+	  var l = r.polygon(0, 0, layer)
+	    .fill(color)
+	    .stroke(false)
+	    .lineTo(0, 0)
+	    .lineTo(0, len)
+	    .lineTo(len, len)
+	    .lineTo(len, len/2)
+	    .lineTo(len/2, len/2)
+	    .lineTo(len/2, 0);
+
+	  if(level < maxLevel)
+	  {
+	    level++;
+
+	    drawL(len/4, len/4, 0, len/2, level, color1, layer);
+	    drawL(len/2, 0, 90, len/2, level, color2, layer);
+	    drawL(0, len/2, 0, len/2, level, color3, layer);
+	    drawL(len/2, len, -90, len/2, level, color4, layer);
+	  }
+
+	  return l;
+	}
+
+	r.play();
 }
 
 window.addEventListener('load', init());

@@ -93,7 +93,8 @@ router.post('/live', function(req,res){
 
      var jsonData = {
       status: "OK",
-      person: data
+      person: data, 
+      sentiment: r1
      }
 
     return res.json(jsonData);
