@@ -2,7 +2,7 @@
 
 /*
 problems:
-- re-posting twice card/json data post - http://stackoverflow.com/questions/13822322/jquery-how-to-clear-an-element-before-appending-new-content
+- WORKING re-posting twice card/json data post - http://stackoverflow.com/questions/13822322/jquery-how-to-clear-an-element-before-appending-new-content
 - WORKINGajax success: function not being called - working thanks to Sam
 - WORKING consequently addCard() not adding - working thanks to Sam
 - have written file upload code, but not able to test it
@@ -42,7 +42,6 @@ function getTask(event){
 	// added by Osama
 	// For making POST request to /live via JQUERY
 
-		jQuery("#addForm").submit(function(e){
 			// first, let's pull out all the values
 			// the name form field value
 			var task = jQuery("#theInput").val();
@@ -50,72 +49,89 @@ function getTask(event){
 			var file = files;
 			var timeNow = timeStamp();
 
+			//socket
+			
+			 // send cardHTML to server via socket
+			// if(transcribeCounter > 0 || callCounter > 0 || findCounter > 0 || buyCounter > 0){
+			// 	//emit new task received
+			// 	socket.emit('new task',{
+			// 	task: task
+			// 	});
+			// }   
+
 			// console.log(e.body.name);
 			console.log(task);
 			console.log(location);
-			taskParse(task);
+			
+			//TASKPARSE!!
+			taskParse(task, function(err, status){
 
-			 // send cardHTML to server via socket
-			if(transcribeCounter > 0 || callCounter > 0 || findCounter > 0 || buyCounter > 0){
-				socket.emit('new valid task', task);
-			}
-    
-			var data = {
-		  		task : task,
-		  		location: userLocation,
-		 		time: timeNow
-		  	};
-			// POST the data from above to our API create route
-		  jQuery.ajax({
-		  	url : '/live',
-		  	dataType : 'json',
-		  	type : 'POST',
-		  	data : data,
-		  	success: function(response){
-		  		addCard(task, timeNow, location);
-		  		
-		  		console.log(response.sentiment);
-		  		addArt();
-		  		addRecursionArt();
-		  		// $("#card-holder")[0].reset();
-		  		// http://stackoverflow.com/questions/10633605/clear-form-values-after-submission-ajax
-		  		// $("#card-holder").html("");
-		  		// $("#card-holder").html(addCard());
+				console.log(err);
+				console.log(status);
 
-		  		// //empty card
-		  		// $("#card-holder").empty();
+				if(status=='failure') return false;
 
-		  		
-			  // 		// in success, let our sockets know we have new data
-			  // 		socket.emit('new transcribe task', response);
-			  // 		id = response._id;
-			  // 		console.log(id);
-			  // 		// now, clear the input fields
-			  // 		jQuery("#addForm input").val('');
-		  	// 	}
-		  	// 	else {
-		  	// 		alert("something went wrong");
-		  	// 	}
-		  	},
-		  	complete: function(){
-		  		// addCard(task, timeNow, location);
-		  		// http://stackoverflow.com/questions/15449751/clear-and-reload-div-with-data-via-ajax-and-jquery
-		  		// $("#card-holder").html("");
-		  		// $("#card-holder").html(addCard());
 
-		  	},
-		  	error : function(err){
-		  		// do error checking
-		  		alert("something went wrong");
-		  		console.error(err);
-		  	}
-		  });
+				var data = {
+			  		task : task,
+			  		location: userLocation,
+			 		time: timeNow
+			  	};
+				// POST the data from above to our API create route
+			  jQuery.ajax({
+			  	url : '/live',
+			  	dataType : 'json',
+			  	type : 'POST',
+			  	data : data,
+			  	success: function(response){
 
-			// prevents the form from submitting normally
-		  e.preventDefault();
-		  return false;
+			  		console.log("GOT A NEW CARD");
+			  		
+			  		addCard(task, timeNow, location);
+			  		
+			  		console.log(response.sentiment.score);
+			  		if(response.sentiment.score > 0){
+			  			// addRecursionArt();
+			  		} else if (response.sentiment.score < 0){
+				  		// addArt();
+			  		} else {
+			  			// do nothing
+			  		}
+			  		
+			  		// $("#card-holder")[0].reset();
+			  		// http://stackoverflow.com/questions/10633605/clear-form-values-after-submission-ajax
+			  		// $("#card-holder").html("");
+			  		// $("#card-holder").html(addCard());
 
-		});
+			  		// //empty card
+			  		// $("#card-holder").empty();
+			  		
+							// in success, let our sockets know we have new data
+
+							// console.log 'task' data received from server
+							socket.emit('new task', response.task);
+
+
+				  // 		socket.emit('new transcribe task', response);
+				  // 		id = response._id;
+				  // 		console.log(id);
+				  // 		// now, clear the input fields
+				  // 		jQuery("#addForm input").val('');
+			  	// 	}
+			  	// 	else {
+			  	// 		alert("something went wrong");
+			  	// 	}
+			  	},
+			  	error : function(err){
+			  		// do error checking
+			  		alert("something went wrong");
+			  		console.error(err);
+			  	}
+
+
+			});				
+			});
+		
 
 
 	// SLOVER -- > USE the values that have been saved to the database 
@@ -125,10 +141,10 @@ function getTask(event){
 	// taskParse(val);
 }
 
-function taskParse(task){
+function taskParse(task, callback){
 // runs from eventlistener from input, which runs getTask() 
 // console.log(task);
-
+var status;
 var taskType = task.match(/^#find|#buy|#transcribe|#call|#Find|#Buy|#Transcribe|#Call$/);
 	console.log(taskType)
 	if(taskType){
@@ -150,8 +166,11 @@ var taskType = task.match(/^#find|#buy|#transcribe|#call|#Find|#Buy|#Transcribe|
 		
 		}
 
+		status="success";
+
 	} else {
 
+		status="failure";
 	var warningDiv = document.getElementById('warning');
 	    	warningDiv.style.display = 'block';
 	    	return setTimeout(function(){ 
@@ -162,6 +181,8 @@ var taskType = task.match(/^#find|#buy|#transcribe|#call|#Find|#Buy|#Transcribe|
 
 	timeNow = timeStamp();
 	// console.log("timeNow: "+timeNow);
+
+	return callback(null,status);
 
 }
 
@@ -178,6 +199,9 @@ function getLocation(){
 
 function addCard(task, timeNow, userLocation){
 
+	// 1. you need to get a reference to the below by putting an id within the HTML
+	// 2. 
+
 	var htmlToAppend = 
     '<div class="card-container col-sm-offset-4 col-md-offset-4">'+
       '<div class="card" "form-group">'+
@@ -186,7 +210,7 @@ function addCard(task, timeNow, userLocation){
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
 	      '<label class="btn btn-default btn-file">'+
-	      ' <span class="glyphicon glyphicon-upload"></span>'+
+	      '<span class="glyphicon glyphicon-upload"></span>'+
    		  '<input type="file" id="image" style="display: none;">'+
 		  '</label>'+
 		  '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'
@@ -392,12 +416,6 @@ if (window.File && window.FileList && window.FileReader) {
 		} //function FileSelectHandler ends
 } //Window FielList, FileReader if-statement ends
 
-// when a new task comes in, have the live transcribe receive it 
-socket.on('new valid task received', function(task){
-  // make a call to the database and re-render the tasks
-  console.log('new transcribe task --> ', task);
-});
-
 
 
 
@@ -578,15 +596,20 @@ error: repeat file image prints
 0. file image storage
 //set upload image option
 // create router post to aws (in index.js here, https://github.com/sslover/class-example-itp-directory/blob/master/routes/index.js)
+
 1. search
 2. create data storage var task = {"buy" : 1, "call" : 0, "find" : 0}
 3. create Task ID
 4. Saving images to database
+
 5. Sentiment analysis
+
 6. webRTC push to talk
 7. tweet task to dashboard
 8. VA dashboard, parses task category
+
 9. Counter for task category to record VA preferences
+
 10. @taday to call task type progress bar
 11. Chart.js visuals 
 

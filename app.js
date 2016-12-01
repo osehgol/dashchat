@@ -48,21 +48,20 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// start listening with socket.io
+// // start listening with socket.io
 app.io.on('connection', function(socket){
 
   console.log('a user is connected '+socket.id);
 
-  socket.on('new transcribe task', function(task){
+  socket.on('new task', function(task){
+    //console.log new task received from main
+     console.log('socket new task ' + JSON.stringify(task) + "from: "+socket.id);
+      // now emit data to all clients via the socket event 'task'
+      app.io.emit('new task received', task);     
 
-     console.log('new transcribe task ' + task);
-      // now emit the new tweet back to the client via the socket event 'new tweet'
-      app.io.emit('new transcribe task received', task);      
-
-  } );
+  });
 
 });
-
 
 // error handlers
 

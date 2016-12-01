@@ -2,6 +2,11 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 
+var app = express();
+
+// call socket.io to the app
+app.io = require('socket.io')();
+
 //sentiment analysis
 var sentiment = require('sentiment');
 // var r1 = sentiment('Cats are stupid.');
@@ -52,7 +57,22 @@ router.get('/live', function(req, res) {
   //res.redirect('/directory')
 
   // respond with html
-  res.render('live.html')
+  res.render('live.html');
+
+  // start listening with socket.io
+  app.io.on('connection', function(socket){
+
+  console.log('a user is connected on /live '+socket.id);
+
+  // socket.on('new task', function(data){
+  //   //console.log new task received from main
+  //    console.log('socket new data ' + data + "from: "+socket.id);
+  //   // now emit data to all clients via the socket event 'task'
+  //    app.io.emit('task', data);      
+
+  // });
+
+});
 
 });
 
@@ -62,7 +82,24 @@ router.get('/live_transcribe', function(req, res) {
   console.log('/live_transcribe requested!');
 
   // respond with html
-  res.render('live_transcribe.html')
+  res.render('live_transcribe.html');
+
+  // start listening with socket.io
+  app.io.on('connection', function(socket){
+
+  console.log('a user is connected in live_transcribe '+socket.id);
+
+  socket.on('new task', function(data){
+    //console.log new task received from main
+     console.log('socket new data ' + data + "from: "+socket.id);
+    // now emit data to all clients via the socket event 'task'
+    app.io.emit('reply', function(){
+      console.log("this is going to be a reply live_transcribe");
+    });      
+
+  });
+
+});
 
 });
 
@@ -93,7 +130,7 @@ router.post('/live', function(req,res){
 
      var jsonData = {
       status: "OK",
-      person: data, 
+      task: data, 
       sentiment: r1
      }
 
