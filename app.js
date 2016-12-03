@@ -53,11 +53,11 @@ app.io.on('connection', function(socket){
 
   console.log('a user is connected '+socket.id);
 
-  socket.on('new task', function(task){
+  socket.on('new task', function(task, sentiment){
     //console.log new task received from main
      console.log('socket new task ' + JSON.stringify(task) + "from: "+socket.id);
       // now emit data to all clients via the socket event 'task'
-      app.io.emit('new task received', task);     
+      app.io.emit('new task received', {task: task, sentiment: sentiment});     
 
   });
 

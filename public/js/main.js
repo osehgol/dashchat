@@ -2,13 +2,7 @@
 
 /*
 problems:
-- WORKING re-posting twice card/json data post - http://stackoverflow.com/questions/13822322/jquery-how-to-clear-an-element-before-appending-new-content
-- WORKINGajax success: function not being called - working thanks to Sam
-- WORKING consequently addCard() not adding - working thanks to Sam
-- have written file upload code, but not able to test it
 - WORKINGcalling sentiment in main - working!
-- generating json data (taskCounter) to support Chart.js viz 
-- 
 
 */
 
@@ -85,42 +79,29 @@ function getTask(event){
 			  	data : data,
 			  	success: function(response){
 
+			  		// background color
+					// http://stackoverflow.com/questions/27766343/change-background-color-every-30s-fade-transition
 			  		console.log("GOT A NEW CARD");
 			  		
 			  		addCard(task, timeNow, location);
 			  		
 			  		console.log(response.sentiment.score);
 			  		if(response.sentiment.score > 0){
-			  			// addRecursionArt();
+			  			 addRecursionArt();
+						document.body.style.backgroundColor = "#da50c8";
+						// c0feb0
+
 			  		} else if (response.sentiment.score < 0){
-				  		// addArt();
+			  			document.body.style.backgroundColor = "#db0000";
+			  			// f1706e
+				  		 addArt();
 			  		} else {
-			  			// do nothing
+			  			document.body.style.backgroundColor = "#51aef4";
 			  		}
-			  		
-			  		// $("#card-holder")[0].reset();
-			  		// http://stackoverflow.com/questions/10633605/clear-form-values-after-submission-ajax
-			  		// $("#card-holder").html("");
-			  		// $("#card-holder").html(addCard());
+					// in success, let our sockets know we have new data
+					// console.log 'task' data received from server
+					socket.emit('new task', {task: response.task, sentiment: response.sentiment.score});
 
-			  		// //empty card
-			  		// $("#card-holder").empty();
-			  		
-							// in success, let our sockets know we have new data
-
-							// console.log 'task' data received from server
-							socket.emit('new task', response.task);
-
-
-				  // 		socket.emit('new transcribe task', response);
-				  // 		id = response._id;
-				  // 		console.log(id);
-				  // 		// now, clear the input fields
-				  // 		jQuery("#addForm input").val('');
-			  	// 	}
-			  	// 	else {
-			  	// 		alert("something went wrong");
-			  	// 	}
 			  	},
 			  	error : function(err){
 			  		// do error checking
@@ -132,13 +113,6 @@ function getTask(event){
 			});				
 			});
 		
-
-
-	// SLOVER -- > USE the values that have been saved to the database 
-
-	// console.log("the value is " + val);	
-	// else, need to geocode it 
-	// taskParse(val);
 }
 
 function taskParse(task, callback){
@@ -512,9 +486,6 @@ r.on('update', function(){
 
 });
 
-	// background color
-	// http://stackoverflow.com/questions/27766343/change-background-color-every-30s-fade-transition
-	// document.body.style.backgroundColor = "white";
 
 	//Here's some Art for you
 	var bg = r.rect(0, 0, r.width, r.height);

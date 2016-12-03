@@ -16,6 +16,7 @@ var sentiment = require('sentiment');
 var Person = require("../models/person.js");
 var Course = require("../models/course.js");
 var Task = require("../models/task.js");
+var Reply = require("../models/reply.js");
 
 // S3 File dependencies
 var AWS = require('aws-sdk');
@@ -84,22 +85,6 @@ router.get('/live_transcribe', function(req, res) {
   // respond with html
   res.render('live_transcribe.html');
 
-  // start listening with socket.io
-  app.io.on('connection', function(socket){
-
-  console.log('a user is connected in live_transcribe '+socket.id);
-
-  socket.on('new task', function(data){
-    //console.log new task received from main
-     console.log('socket new data ' + data + "from: "+socket.id);
-    // now emit data to all clients via the socket event 'task'
-    app.io.emit('reply', function(){
-      console.log("this is going to be a reply live_transcribe");
-    });      
-
-  });
-
-});
 
 });
 
@@ -131,6 +116,41 @@ router.post('/live', function(req,res){
      var jsonData = {
       status: "OK",
       task: data, 
+      sentiment: r1
+     }
+
+    return res.json(jsonData);
+
+  });
+
+});
+
+
+router.post('/live_transcribe', function(req,res){
+
+  console.log(req.body);
+
+  // var replyObject = {
+  //   reply: req.body
+  // }
+
+  var reply = new Reply(req.body);
+
+  //console.log(reply);
+
+  var r1 = sentiment(reply.reply);
+  //console.dir(r1);
+
+  reply.save(function(err,data){
+    // err
+    if(err) console.log('we have error -> ' + err);
+
+    // let's log out what just got saved
+    console.log(data);
+
+     var jsonData = {
+      status: "OK",
+      reply: data, 
       sentiment: r1
      }
 
