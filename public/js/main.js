@@ -99,13 +99,16 @@ function getMood(event){
 			  			document.body.style.backgroundColor = "#db0000";
 
 			  			setTimeout(function(){ 
-				    		addResponse(negativeWordList, timeNow, location);
-				    		
-				    	}, 3000);
+				    		addResponse(negativeWordList, timeNow, location);				    		
+				    	}, 1000);
 
 				    	setTimeout(function(){
 				    		addArt(); 
-				    	}, 5000);
+				    	}, 2000);
+
+				    	setTimeout(function(){
+				    		fanciesArtist(timeNow, location); 
+				    	}, 3000);
 
 			  			// f1706e
 				  		// addArt();
@@ -133,7 +136,7 @@ function moodParse(task, callback){
 // runs from eventlistener from input, which runs getMood() 
 // console.log(task);
 var status;
-var taskType = task.match(/^#buy|#transcribe|#call|#Buy|#Transcribe|#Call|#confused|#Confused$/);
+var taskType = task.match(/^#buy|#transcribe|#Funny|#Buy|#Transcribe|#Funny|#funny|funny|#confused|#Confused|confused$/);
 	console.log(taskType)
 	if(taskType){
 
@@ -222,6 +225,30 @@ function addResponse(negativeWordList, timeNow, userLocation){
       '<div class="response" "form-group">'+
         // '<img src="img/'+userLocation+'.png">'+
           '<h2>As '+negativeWordList+' as the guy who made this?<br /></h2>'+
+          '<h4>@ '+timeNow+'</h4>'+
+          '<h4>'+userLocation+'</h4>'+
+        '<label class="btn btn-default btn-file">'+
+        '<span class="glyphicon glyphicon-upload"></span>'+
+        '<input type="file" id="image" style="display: none;">'+
+      '</label>'+
+      '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'
+        '</div>'+
+      '</div>'+
+    '</div>'
+ 
+
+  return $('#card-holder').prepend(htmlToAppend);
+
+}	
+
+
+function fanciesArtist(timeNow, userLocation){
+
+  var htmlToAppend = 
+    // '<div class="card-container col-sm-6">'+
+      '<div class="response" "art-response" "form-group">'+
+        // '<img src="img/'+userLocation+'.png">'+
+          '<h2> Fancies himself an <a href="www.osamasehgol.com">artist</a><br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
         '<label class="btn btn-default btn-file">'+
@@ -435,7 +462,7 @@ if (window.File && window.FileList && window.FileReader) {
 function addArt(){
 	//RUNE.JS portion
 var r = new Rune({
-  container: ".art-holder",
+  container: ".card-container",
   width: 200,
   height: 200
 });
@@ -536,6 +563,7 @@ r.on('update', function(){
 
 
 r.play();
+
 
 }
 
