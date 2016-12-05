@@ -10,6 +10,7 @@ problems:
 var socket = io();
 
 function init() {
+  // document.getElementById('theInput').value = "How're you feeling?"
   document.getElementById('theInput').addEventListener('change', getMood);
   getLocation();
 }
@@ -99,7 +100,8 @@ function getMood(event){
 			  			document.body.style.backgroundColor = "#db0000";
 
 			  			setTimeout(function(){ 
-				    		addResponse(negativeWordList, timeNow, location);				    		
+				    		addResponse(negativeWordList, timeNow, location);
+				    					    		
 				    	}, 1000);
 
 				    	setTimeout(function(){
@@ -220,6 +222,9 @@ function addCard(task, timeNow, userLocation){
 
 function addResponse(negativeWordList, timeNow, userLocation){
 
+changePlaceholder();
+
+
   var htmlToAppend = 
     '<div class="card-container col-sm-6">'+
       '<div class="response" "form-group">'+
@@ -241,6 +246,9 @@ function addResponse(negativeWordList, timeNow, userLocation){
 
 }	
 
+function changePlaceholder(){
+	return $('theInput').attr('placeholder'," ");
+}
 
 function fanciesArtist(timeNow, userLocation){
 
