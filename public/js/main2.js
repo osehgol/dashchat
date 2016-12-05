@@ -11,6 +11,8 @@ function init() {
         console.log(task.task.sentiment);
         console.log(task.task.task.location);
 
+        var sentiment = task.task.sentiment;
+
         if(task.task.sentiment > 0){
               // addRecursionArt();
             document.body.style.backgroundColor = "#da50c8";
@@ -82,6 +84,30 @@ function getReply(event){
 
 
 			});
+
+}
+
+function addResponse(negativeWordList, timeNow, userLocation){
+
+
+  var htmlToAppend = 
+    '<div class="card-container col-sm-6">'+
+      '<div class="response" "form-group">'+
+        // '<img src="img/'+userLocation+'.png">'+
+          '<h2>'+negativeWordList+'<br /></h2>'+
+          '<h4>@ '+timeNow+'</h4>'+
+          '<h4>'+userLocation+'</h4>'+
+        '<label class="btn btn-default btn-file">'+
+        '<span class="glyphicon glyphicon-upload"></span>'+
+        '<input type="file" id="image" style="display: none;">'+
+      '</label>'+
+      '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'
+        '</div>'+
+      '</div>'+
+    '</div>'
+ 
+
+  return $('#card-holder').prepend(htmlToAppend);
 
 }
 

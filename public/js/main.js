@@ -10,7 +10,7 @@ problems:
 var socket = io();
 
 function init() {
-  document.getElementById('theInput').addEventListener('change', getTask);
+  document.getElementById('theInput').addEventListener('change', getMood);
   getLocation();
 }
 
@@ -26,11 +26,11 @@ var transcribeCounter = 0;
 var callCounter = 0;
 var taskCounter = 0;
 
-function getTask(event){
+function getMood(event){
 
 	var val = document.getElementById('theInput').value;
 	// if there is no value, or it is an empty string, prompt the user
-	if(!val || val=="") return alert("Enter Task Please");
+	if(!val || val=="") return alert("Enter Mood Please");
 
 	// SLOVER -- > save to database here, and then on SUCCESS run the logic to post on the page
 	// added by Osama
@@ -57,8 +57,8 @@ function getTask(event){
 			console.log(task);
 			console.log(location);
 			
-			//TASKPARSE!!
-			taskParse(task, function(err, status){
+			//moodParse!!
+			moodParse(task, function(err, status){
 
 				console.log(err);
 				console.log(status);
@@ -85,16 +85,27 @@ function getTask(event){
 			  		
 			  		addCard(task, timeNow, location);
 			  		
+			  		var negativeWordList = response.sentiment.negative;
+
 			  		console.log(response.sentiment.score);
 			  		if(response.sentiment.score > 0){
-			  			 addRecursionArt();
+			  			// addRecursionArt();
+			  			// purple
 						document.body.style.backgroundColor = "#da50c8";
 						// c0feb0
 
 			  		} else if (response.sentiment.score < 0){
+			  			// red
 			  			document.body.style.backgroundColor = "#db0000";
+
+			  			setTimeout(function(){ 
+				    		addResponse(negativeWordList, timeNow, location); 
+				    	}, 3000)
+
+			  			
+
 			  			// f1706e
-				  		 addArt();
+				  		// addArt();
 			  		} else {
 			  			document.body.style.backgroundColor = "#51aef4";
 			  		}
@@ -115,11 +126,11 @@ function getTask(event){
 		
 }
 
-function taskParse(task, callback){
-// runs from eventlistener from input, which runs getTask() 
+function moodParse(task, callback){
+// runs from eventlistener from input, which runs getMood() 
 // console.log(task);
 var status;
-var taskType = task.match(/^#find|#buy|#transcribe|#call|#Find|#Buy|#Transcribe|#Call$/);
+var taskType = task.match(/^#buy|#transcribe|#call|#Buy|#Transcribe|#Call|#confused|#Confused$/);
 	console.log(taskType)
 	if(taskType){
 
@@ -128,7 +139,7 @@ var taskType = task.match(/^#find|#buy|#transcribe|#call|#Find|#Buy|#Transcribe|
 		// search through array find #matches
 		for(var i=0; i < taskArray.length; i++){
 			
-			if(taskArray[i] == "#find" || taskArray[i] == "#Find"){
+			if(taskArray[i] == "#confused" || taskArray[i] == "#Confused"){
 				findCounter++; console.log("findCounter is "+findCounter);
 			} else if (taskArray[i] == "#call" || taskArray[i] == "#Call"){
 				callCounter++; console.log("callCounter is "+callCounter);
@@ -177,6 +188,7 @@ function addCard(task, timeNow, userLocation){
 	// 2. 
 
 	var htmlToAppend = 
+    // '<div class="card-container col-sm-6">'+
     '<div class="card-container col-sm-offset-4 col-md-offset-4">'+
       '<div class="card" "form-group">'+
         // '<img src="img/'+userLocation+'.png">'+
@@ -199,6 +211,29 @@ function addCard(task, timeNow, userLocation){
 	return $('#card-holder').prepend(htmlToAppend);
 
 }
+
+function addResponse(negativeWordList, timeNow, userLocation){
+
+  var htmlToAppend = 
+    '<div class="card-container col-sm-6">'+
+      '<div class="response" "form-group">'+
+        // '<img src="img/'+userLocation+'.png">'+
+          '<h2>Don\'t feel '+negativeWordList+'<br /></h2>'+
+          '<h4>@ '+timeNow+'</h4>'+
+          '<h4>'+userLocation+'</h4>'+
+        '<label class="btn btn-default btn-file">'+
+        '<span class="glyphicon glyphicon-upload"></span>'+
+        '<input type="file" id="image" style="display: none;">'+
+      '</label>'+
+      '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'
+        '</div>'+
+      '</div>'+
+    '</div>'
+ 
+
+  return $('#card-holder').prepend(htmlToAppend);
+
+}	
 
 /**
  * Return a timestamp with the format "m/d/yy h:MM:ss TT"
