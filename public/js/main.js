@@ -99,10 +99,13 @@ function getMood(event){
 			  			document.body.style.backgroundColor = "#db0000";
 
 			  			setTimeout(function(){ 
-				    		addResponse(negativeWordList, timeNow, location); 
-				    	}, 3000)
+				    		addResponse(negativeWordList, timeNow, location);
+				    		
+				    	}, 3000);
 
-			  			
+				    	setTimeout(function(){
+				    		addArt(); 
+				    	}, 5000);
 
 			  			// f1706e
 				  		// addArt();
@@ -218,7 +221,7 @@ function addResponse(negativeWordList, timeNow, userLocation){
     '<div class="card-container col-sm-6">'+
       '<div class="response" "form-group">'+
         // '<img src="img/'+userLocation+'.png">'+
-          '<h2>Don\'t feel '+negativeWordList+'<br /></h2>'+
+          '<h2>As '+negativeWordList+' as the guy who made this?<br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
         '<label class="btn btn-default btn-file">'+
@@ -432,7 +435,7 @@ if (window.File && window.FileList && window.FileReader) {
 function addArt(){
 	//RUNE.JS portion
 var r = new Rune({
-  container: ".container",
+  container: ".art-holder",
   width: 200,
   height: 200
 });
@@ -527,7 +530,7 @@ r.on('update', function(){
 	var hue = 0;
 
 	r.on('update', function() {
-	  bg.fill('hsv', hue, 100, 100).stroke(false);
+	  bg.fill('hsv', hue, 150, 100).stroke(false);
 	  hue++;
 	});
 
