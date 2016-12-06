@@ -90,47 +90,53 @@ function getMood(event){
 
 			  		
 			  		var negativeWordList = response.sentiment.negative;
+			  		var postiveWord = response.sentiment.positive;
 			  		var words = response.sentiment.words;
 			  		console.log(response.sentiment.score);
-			  		if(response.sentiment.score > 0){
+			  		if(response.sentiment.score > 0 && response.sentiment.score < 3){
 			  			// addRecursionArt();
 			  			// purple
-						document.body.style.backgroundColor = "#da50c8";
 
-						for(var i=0; i < words.length; i++){
-							if (words[i] == "interesting"){
-								
-								setTimeout(function(){
-									addImage();									
-								}, 1500);
+			  			setTimeout(function(){
+							document.body.style.backgroundColor = "#8eaefe";					
+						}, 1500);
+						
+						setTimeout(function(){
+							whatsFunny(postiveWord, timeNow, location);									
+						}, 5000);
 
-								setTimeout(function(){
-									whatsFunny(timeNow, location);
-								}, 3000);
-							} else if( words[i] == "LOL" || words[i] == "lol"){
-								setTimeout(function(){
-									// lol function();						
-								}, 1500);
-							}
-						}	
+						setTimeout(function(){
+							addImage();
+						}, 7000);	
+							
 						// c0feb0
 
-			  		} else if (response.sentiment.score < 0){
-			  			// red
-			  			document.body.style.backgroundColor = "#db0000";
+			  		} else if (response.sentiment.score >= 3){
+			  			setTimeout(function(){
+							document.body.style.backgroundColor = "#3cfe90";					
+						}, 1500);
+			  		}
 
+
+			  		else if (response.sentiment.score < 0){
+			  			// red
+
+			  			setTimeout(function(){
+							document.body.style.backgroundColor = "#ff652a";					
+						}, 1500);
+			  			
 			  			setTimeout(function(){ 
 				    		addResponse(negativeWordList, timeNow, location);
 				    		document.getElementById('theInput').placeholder = "";			    		
-				    	}, 1000);
+				    	}, 6000);
 
 				    	setTimeout(function(){
 				    		addArt(); 
-				    	}, 2000);
+				    	}, 14000);
 
 				    	setTimeout(function(){
 				    		fanciesArtist(timeNow, location); 
-				    	}, 3000);
+				    	}, 10000);
 
 			  			// f1706e
 				  		// addArt();
@@ -181,15 +187,16 @@ var taskType = task.match(/^#interesting|interesting|Interesting|lol|LOL|#lol|#F
 
 		status="success";
 
-	} else {
+	} 
+	// else {
 
-		status="failure";
-	var warningDiv = document.getElementById('warning');
-	    	warningDiv.style.display = 'block';
-	    	return setTimeout(function(){ 
-	    		$("#warning").fadeOut(); }, 
-	    	3000);	 
-	}
+	// 	status="failure";
+	// var warningDiv = document.getElementById('warning');
+	//     	warningDiv.style.display = 'block';
+	//     	return setTimeout(function(){ 
+	//     		$("#warning").fadeOut(); }, 
+	//     	3000);	 
+	// }
 
 
 	timeNow = timeStamp();
@@ -249,7 +256,7 @@ changePlaceholder();
     '<div class="card-container col-sm-6">'+
       '<div class="response" "form-group">'+
         // '<img src="img/'+userLocation+'.png">'+
-          '<h2>'+negativeWordList+'? Hmm... reminds me of:<br /></h2>'+
+          '<h2>'+negativeWordList+'? Hmm... reminds me of an art piece<br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
         '<label class="btn btn-default btn-file">'+
@@ -295,13 +302,13 @@ function fanciesArtist(timeNow, userLocation){
 
 }	
 
-function whatsFunny(timeNow, userLocation){
+function whatsFunny(positiveWord, timeNow, userLocation){
 
   var htmlToAppend = 
     // '<div class="card-container col-sm-6">'+
       '<div class="response" "form-group">'+
         // '<img src="img/'+userLocation+'.png">'+
-          '<h2> What\'s interesting is, I can\'t see the bird in this image<br /></h2>'+
+          '<h2>'+positiveWord+'? What\'s '+positiveWord+ ' is, I can\'t see the bird in this image<br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
       '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'+
@@ -531,8 +538,8 @@ function addArt(){
 	//RUNE.JS portion
 var r = new Rune({
   container: ".card-container",
-  width: 200,
-  height: 200
+  width: 400,
+  height: 300
 });
 
 // Create colors
@@ -625,7 +632,7 @@ r.on('update', function(){
 	var hue = 0;
 
 	r.on('update', function() {
-	  bg.fill('hsv', hue, 150, 100).stroke(false);
+	  bg.fill(253, 254, 239).stroke(false);
 	  // hue++;
 	});
 
