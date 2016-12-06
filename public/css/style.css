@@ -68,11 +68,15 @@ input{
 }
 
 .card-container {
-	/*margin-bottom: 30px;*/
+	margin-bottom: 30px;
 }
 
 .response-container {
   /*margin-bottom: 30px;*/
+}
+
+rect {
+  margin-bottom: 30px;
 }
 
 .card {

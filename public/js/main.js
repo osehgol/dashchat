@@ -113,8 +113,12 @@ function getMood(event){
 
 			  		} else if (response.sentiment.score >= 3){
 			  			setTimeout(function(){
-							document.body.style.backgroundColor = "#3cfe90";					
-						}, 1500);
+			  				happyToSmile(timeNow, location);
+
+			  				setTimeout(function(){
+								document.body.style.backgroundColor = "#3cfe90";
+							}, 3000);					
+						}, 3000);
 			  		}
 
 
@@ -126,8 +130,7 @@ function getMood(event){
 						}, 1500);
 			  			
 			  			setTimeout(function(){ 
-				    		addResponse(negativeWordList, timeNow, location);
-				    		document.getElementById('theInput').placeholder = "";			    		
+				    		addResponse(negativeWordList, timeNow, location);			    		
 				    	}, 6000);
 
 				    	setTimeout(function(){
@@ -142,6 +145,9 @@ function getMood(event){
 				  		// addArt();
 			  		} else {
 			  			document.body.style.backgroundColor = "#51aef4";
+			  			setTimeout(function(){
+				    		didntGet(timeNow, location); 
+				    	}, 2000);
 			  		}
 					// in success, let our sockets know we have new data
 					// console.log 'task' data received from server
@@ -320,6 +326,43 @@ function whatsFunny(positiveWord, timeNow, userLocation){
   return $('#card-holder').prepend(htmlToAppend);
 
 }	
+
+function happyToSmile(timeNow, location){
+
+	
+  var htmlToAppend = 
+	// '<div class="card-container col-sm-6">'+
+      '<div class="response" "form-group">'+
+        // '<img src="img/'+userLocation+'.png">'+
+          '<h2>Happy to see you\'re all smiles!<br /></h2>'+
+          '<h4>@ '+timeNow+'</h4>'+
+          '<h4>'+userLocation+'</h4>'+
+      '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'
+ 
+
+  return $('#card-holder').prepend(htmlToAppend);
+
+}
+
+function didntGet(timeNow, location){
+	var htmlToAppend = 
+	// '<div class="card-container col-sm-6">'+
+      '<div class="response" "form-group">'+
+        // '<img src="img/'+userLocation+'.png">'+
+          '<h2>I didn\'t catch that<br /></h2>'+
+          '<h4>@ '+timeNow+'</h4>'+
+          '<h4>'+userLocation+'</h4>'+
+      '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'
+ 
+
+  return $('#card-holder').prepend(htmlToAppend);
+};
 
 function addImage(){
 
@@ -538,7 +581,7 @@ function addArt(){
 	//RUNE.JS portion
 var r = new Rune({
   container: ".card-container",
-  width: 400,
+  width: 300,
   height: 300
 });
 
@@ -566,7 +609,7 @@ while (x < 1000) {
   // increment x with a random amount
   x += Rune.random(1, r.width-50);
   // use noise to find a y value from 500 to 600.
-  y = noise.get(x / 100) * (r.height-50);
+  y = noise.get(x) * (r.height-50);
   // push this point into the array
   linePoints.push(new Rune.Vector(x, y));
 }
