@@ -3,9 +3,17 @@
 /**************/
 
 body {
-	background: #51aef4;
-	color: #fff;
-	font-family: 'Muli', sans-serif;
+	
+    background: #51aef4;
+    color: #fff;
+    font-family: 'Muli', sans-serif;
+
+    -webkit-transition: background-color 2s ease-in-out;
+    -moz-transition: background-color 2s ease-in-out;
+    -o-transition: background-color 2s ease-in-out;
+    -khtml-transition: background-color 2s ease-in-out;
+    transition: background-color 2s ease-in-out;
+  
 }
 
 #warning {

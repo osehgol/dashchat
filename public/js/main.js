@@ -537,7 +537,7 @@ var r = new Rune({
 
 // Create colors
 // -------------------------------------
-
+// 
 var colors = [
   [ new Rune.Color('hsv', 0, 85, 22), new Rune.Color('hsv', 0, 80, 77, 0.8) ],  // reds
   [ new Rune.Color('hsv', 85, 84, 20), new Rune.Color('hsv', 85, 79, 38, 0.8) ], // greens
@@ -626,7 +626,7 @@ r.on('update', function(){
 
 	r.on('update', function() {
 	  bg.fill('hsv', hue, 150, 100).stroke(false);
-	  hue++;
+	  // hue++;
 	});
 
 
