@@ -10,7 +10,7 @@ problems:
 var socket = io();
 
 function init() {
-  // document.getElementById('theInput').value = "How're you feeling?"
+  document.getElementById('theInput').placeholder = "How're you feeling?"
   document.getElementById('theInput').addEventListener('change', getMood);
   getLocation();
 }
@@ -32,6 +32,8 @@ function getMood(event){
 	var val = document.getElementById('theInput').value;
 	// if there is no value, or it is an empty string, prompt the user
 	if(!val || val=="") return alert("Enter Mood Please");
+
+	if(event && event.keyCode == 13) return document.getElementById('theInput').placeholder = "";
 
 	// SLOVER -- > save to database here, and then on SUCCESS run the logic to post on the page
 	// added by Osama
@@ -85,14 +87,24 @@ function getMood(event){
 			  		console.log("GOT A NEW CARD");
 			  		
 			  		addCard(task, timeNow, location);
+
 			  		
 			  		var negativeWordList = response.sentiment.negative;
-
+			  		var words = response.sentiment.words;
 			  		console.log(response.sentiment.score);
 			  		if(response.sentiment.score > 0){
 			  			// addRecursionArt();
 			  			// purple
 						document.body.style.backgroundColor = "#da50c8";
+
+						for(var i=0; i < words.length; i++){
+							if (words[i] == "funny"){
+								
+								setTimeout(function(){
+									whatsFunny(timeNow, location);									
+								}, 1500);
+							}
+						}	
 						// c0feb0
 
 			  		} else if (response.sentiment.score < 0){
@@ -101,7 +113,7 @@ function getMood(event){
 
 			  			setTimeout(function(){ 
 				    		addResponse(negativeWordList, timeNow, location);
-				    					    		
+				    		document.getElementById('theInput').placeholder = "";			    		
 				    	}, 1000);
 
 				    	setTimeout(function(){
@@ -247,16 +259,41 @@ changePlaceholder();
 }	
 
 function changePlaceholder(){
-	return $('theInput').attr('placeholder'," ");
+	console.log("change placeholder ran");
+	// document.getElementById('theInput').addEventListener('')
+	document.getElementById('theInput').placeholder = "";
 }
 
 function fanciesArtist(timeNow, userLocation){
 
   var htmlToAppend = 
     // '<div class="card-container col-sm-6">'+
-      '<div class="response" "art-response" "form-group">'+
+      '<div class="response" "form-group">'+
         // '<img src="img/'+userLocation+'.png">'+
           '<h2> Fancies himself an <a href="www.osamasehgol.com">artist</a><br /></h2>'+
+          '<h4>@ '+timeNow+'</h4>'+
+          '<h4>'+userLocation+'</h4>'+
+        '<label class="btn btn-default btn-file">'+
+        '<span class="glyphicon glyphicon-upload"></span>'+
+        '<input type="file" id="image" style="display: none;">'+
+      '</label>'+
+      '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'
+        '</div>'+
+      '</div>'+
+    '</div>'
+ 
+
+  return $('#card-holder').prepend(htmlToAppend);
+
+}	
+
+function whatsFunny(timeNow, userLocation){
+
+  var htmlToAppend = 
+    // '<div class="card-container col-sm-6">'+
+      '<div class="response" "form-group">'+
+        // '<img src="img/'+userLocation+'.png">'+
+          '<h2> You know what\'s funny?<br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
         '<label class="btn btn-default btn-file">'+
