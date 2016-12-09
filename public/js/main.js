@@ -10,7 +10,7 @@ problems:
 var socket = io();
 
 function init() {
-  document.getElementById('theInput').placeholder = "How're you feeling?"
+  document.getElementById('theInput').placeholder = "What did Anil say?"
   document.getElementById('theInput').addEventListener('change', getMood);
   getLocation();
 }
@@ -99,26 +99,26 @@ function getMood(event){
 
 			  			setTimeout(function(){
 							document.body.style.backgroundColor = "#8eaefe";					
-						}, 1500);
+						}, 5000);
 						
 						setTimeout(function(){
 							whatsFunny(postiveWord, timeNow, location);									
-						}, 5000);
+						}, 4000);
 
 						setTimeout(function(){
-							addImage();
+							// addImage();
 						}, 7000);	
 							
 						// c0feb0
 
 			  		} else if (response.sentiment.score >= 3){
 			  			setTimeout(function(){
-			  				happyToSmile(timeNow, location);
-
-			  				setTimeout(function(){
-								document.body.style.backgroundColor = "#3cfe90";
-							}, 3000);					
+			  				happyToSmile(timeNow, location);					
 						}, 3000);
+
+						setTimeout(function(){
+							document.body.style.backgroundColor = "#3cfe90";
+						}, 4000);
 			  		}
 
 
@@ -127,27 +127,21 @@ function getMood(event){
 
 			  			setTimeout(function(){
 							document.body.style.backgroundColor = "#ff652a";					
-						}, 1500);
+						}, 5000);
 			  			
 			  			setTimeout(function(){ 
 				    		addResponse(negativeWordList, timeNow, location);			    		
-				    	}, 6000);
+				    	}, 4000);
 
-				    	setTimeout(function(){
-				    		addArt(); 
-				    	}, 14000);
-
-				    	setTimeout(function(){
-				    		fanciesArtist(timeNow, location); 
-				    	}, 10000);
-
-			  			// f1706e
-				  		// addArt();
 			  		} else {
-			  			document.body.style.backgroundColor = "#51aef4";
+			  			
 			  			setTimeout(function(){
 				    		didntGet(timeNow, location); 
-				    	}, 2000);
+				    	}, 4000);
+
+				    	setTimeout(function(){
+							document.body.style.backgroundColor = "#51aef4";					
+						}, 5000);
 			  		}
 					// in success, let our sockets know we have new data
 					// console.log 'task' data received from server
@@ -261,8 +255,8 @@ changePlaceholder();
   var htmlToAppend = 
     '<div class="card-container col-sm-6">'+
       '<div class="response" "form-group">'+
-        // '<img src="img/'+userLocation+'.png">'+
-          '<h2>'+negativeWordList+'? Hmm... reminds me of an art piece<br /></h2>'+
+        '<img src="/img/deniro-1.jpg"></img>'+
+          '<h2>Hmm...<br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
         '<label class="btn btn-default btn-file">'+
@@ -313,8 +307,8 @@ function whatsFunny(positiveWord, timeNow, userLocation){
   var htmlToAppend = 
     // '<div class="card-container col-sm-6">'+
       '<div class="response" "form-group">'+
-        // '<img src="img/'+userLocation+'.png">'+
-          '<h2>'+positiveWord+'? What\'s '+positiveWord+ ' is, I can\'t see the bird in this image<br /></h2>'+
+        '<img src="img/deniro-3.jpg">'+
+          // '<h2>'+positiveWord+'? What\'s '+positiveWord+ ' is, I can\'t see the bird in this image<br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
       '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'+
@@ -333,8 +327,8 @@ function happyToSmile(timeNow, location){
   var htmlToAppend = 
 	// '<div class="card-container col-sm-6">'+
       '<div class="response" "form-group">'+
-        // '<img src="img/'+userLocation+'.png">'+
-          '<h2>Happy to see you\'re all smiles!<br /></h2>'+
+          '<img src="img/deniro-4.jpg">'+
+          '<h2><br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
       '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'+
@@ -351,8 +345,8 @@ function didntGet(timeNow, location){
 	var htmlToAppend = 
 	// '<div class="card-container col-sm-6">'+
       '<div class="response" "form-group">'+
-        // '<img src="img/'+userLocation+'.png">'+
-          '<h2>I didn\'t catch that<br /></h2>'+
+        '<img src="img/deniro-2.jpg">'+
+          '<h2>Sure<br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
       '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'+
