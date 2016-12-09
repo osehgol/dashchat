@@ -96,7 +96,7 @@ rect {
     box-shadow: 0 2px 3px rgba(0,0,0,.05);
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    height: 260px;
+    height: 210px;
     width: 800px;	
 }
 
@@ -104,24 +104,28 @@ rect {
   color: #404d5f;
   margin: 0;
   margin-top: 10px;
+  margin-left: 10px;
   /*float: right;*/
 }
 
 .card h3{
   color: #979ea9;
+   margin-left: 150px;
   /*float: right;*/
 }
 
 .card h4{
   color: #979ea9;
+  margin-left: 150px;
   /*float: right;*/
 }
 
 .card img {
+  float:left;
   width: 40%;
   max-width: 150px;
   min-width: 125px; 
-  /*float: right;*/
+  padding-right: 20px;
 }
 
 .response{
@@ -141,7 +145,7 @@ rect {
     box-shadow: 0 2px 3px rgba(0,0,0,.05);
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    height: 260px;
+    height: 210px;
     width: 800px; 
 }
 

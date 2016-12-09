@@ -99,11 +99,11 @@ function getMood(event){
 
 			  			setTimeout(function(){
 							document.body.style.backgroundColor = "#8eaefe";					
-						}, 5000);
+						}, 2000);
 						
 						setTimeout(function(){
 							whatsFunny(postiveWord, timeNow, location);									
-						}, 4000);
+						}, 6000);
 
 						setTimeout(function(){
 							// addImage();
@@ -127,11 +127,11 @@ function getMood(event){
 
 			  			setTimeout(function(){
 							document.body.style.backgroundColor = "#ff652a";					
-						}, 5000);
+						}, 2000);
 			  			
 			  			setTimeout(function(){ 
 				    		addResponse(negativeWordList, timeNow, location);			    		
-				    	}, 4000);
+				    	}, 6000);
 
 			  		} else {
 			  			
@@ -226,12 +226,12 @@ function addCard(task, timeNow, userLocation){
     // '<div class="card-container col-sm-6">'+
     '<div class="card-container col-sm-offset-4 col-md-offset-4">'+
       '<div class="card" "form-group">'+
-        // '<img src="img/'+userLocation+'.png">'+
+          '<img src="img/anil-dash.jpg">'+
           '<h2>'+task+'<br /></h2>'+
           '<h4>@ '+timeNow+'</h4>'+
           '<h4>'+userLocation+'</h4>'+
-	      '<label class="btn btn-default btn-file">'+
-	      '<span class="glyphicon glyphicon-upload"></span>'+
+	      // '<label class="btn btn-default btn-file">'+
+	      // '<span class="glyphicon glyphicon-upload"></span>'+
    		  '<input type="file" id="image" style="display: none;">'+
 		  '</label>'+
 		  '<div class="idOfData" style="display:none">thisIsJustAnExampleId12345</div>'
