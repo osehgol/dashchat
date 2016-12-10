@@ -10,7 +10,7 @@ problems:
 var socket = io();
 
 function init() {
-  document.getElementById('theInput').placeholder = "What did Anil say?"
+  document.getElementById('theInput').placeholder = "What did Ali say?"
   document.getElementById('theInput').addEventListener('change', getMood);
   getLocation();
 }
